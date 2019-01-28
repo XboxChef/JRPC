@@ -1,0 +1,6 @@
+C:\Users\Serenity\source\repos\JRPC_Client\JRPC_Client\bin\Debug\JRPC_Client.dll
+C:\Users\Serenity\source\repos\JRPC_Client\JRPC_Client\bin\Debug\JRPC_Client.pdb
+C:\Users\Serenity\source\repos\JRPC_Client\JRPC_Client\obj\Debug\JRPC_Client.csprojAssemblyReference.cache
+C:\Users\Serenity\source\repos\JRPC_Client\JRPC_Client\obj\Debug\JRPC_Client.csproj.CoreCompileInputs.cache
+C:\Users\Serenity\source\repos\JRPC_Client\JRPC_Client\obj\Debug\JRPC_Client.dll
+C:\Users\Serenity\source\repos\JRPC_Client\JRPC_Client\obj\Debug\JRPC_Client.pdb
