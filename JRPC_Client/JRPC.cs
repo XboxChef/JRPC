@@ -351,7 +351,7 @@
             xbConsole.DebugTarget.InvalidateMemoryCache(true, address, length);
             return data;
         }
-        /*public byte[] GetMemory(uint Offset, uint length)
+        public byte[] GetMemory(uint Offset, uint length)
         {
             uint num2;
             byte[] data = new byte[length];
@@ -367,7 +367,7 @@
             }
             xbConsole.DebugTarget.GetMemory(Offset, length, data, out num2);
             return data;
-        }*/
+        }
 
         public uint getTemperature(Temperature temperature)
         {
