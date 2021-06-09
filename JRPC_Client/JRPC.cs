@@ -839,7 +839,11 @@ namespace JRPC_Client
             }
             return -1;
         }
-
+        /// <summary>
+        /// Gets The Console's CPU Key Information
+        /// </summary>
+        /// <param name="console"></param>
+        /// <returns>Allows Class To Be Called</returns>
         public static string GetCPUKey(this IXboxConsole console)
         {
             string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=10 params=\"A\\0\\A\\0\\\"";
