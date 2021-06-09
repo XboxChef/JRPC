@@ -11,884 +11,830 @@ namespace JRPC_Client
 {
     public static class JRPC
     {
-
-        private readonly static uint Byte;
-
-        private readonly static uint ByteArray;
-
+        private static readonly uint Byte = 4;
+        private static readonly uint ByteArray = 7;
         private static uint connectionId;
-
-        private readonly static uint Float;
-
-        private readonly static uint FloatArray;
-
-        private readonly static uint IntArray;
-
-        private static Dictionary<Type, int> StructPrimitiveSizeMap;
-
-        private readonly static uint Uint64;
-
-        private readonly static uint Uint64Array;
-
-        private static HashSet<Type> ValidReturnTypes;
-
-        private static Dictionary<Type, int> ValueTypeSizeMap;
-        private readonly static uint Void;
-
-        public readonly static uint Int;
-
-        public readonly static uint JRPCVersion;
-
-        public readonly static uint String;
-
-        static JRPC()
-        {
-            Void = 0;
-            Int = 1;
-            String = 2;
-            Float = 3;
-            Byte = 4;
-            IntArray = 5;
-            FloatArray = 6;
-            ByteArray = 7;
-            Uint64 = 8;
-            Uint64Array = 9;
-            JRPCVersion = 2;
-            Dictionary<Type, int> types = new Dictionary<Type, int>()
-            {
-                { typeof(bool), 4 },
-                { typeof(byte), 1 },
-                { typeof(short), 2 },
-                { typeof(int), 4 },
-                { typeof(long), 8 },
-                { typeof(ushort), 2 },
-                { typeof(uint), 4 },
-                { typeof(ulong), 8 },
-                { typeof(float), 4 },
-                { typeof(double), 8 }
-            };
-            ValueTypeSizeMap = types;
-            StructPrimitiveSizeMap = new Dictionary<Type, int>();
-            HashSet<Type> types1 = new HashSet<Type>();
-            types1.Add(typeof(void));
-            types1.Add(typeof(bool));
-            types1.Add(typeof(byte));
-            types1.Add(typeof(short));
-            types1.Add(typeof(int));
-            types1.Add(typeof(long));
-            types1.Add(typeof(ushort));
-            types1.Add(typeof(uint));
-            types1.Add(typeof(ulong));
-            types1.Add(typeof(float));
-            types1.Add(typeof(double));
-            types1.Add(typeof(string));
-            types1.Add(typeof(bool[]));
-            types1.Add(typeof(byte[]));
-            types1.Add(typeof(short[]));
-            types1.Add(typeof(int[]));
-            types1.Add(typeof(long[]));
-            types1.Add(typeof(ushort[]));
-            types1.Add(typeof(uint[]));
-            types1.Add(typeof(ulong[]));
-            types1.Add(typeof(float[]));
-            types1.Add(typeof(double[]));
-            types1.Add(typeof(string[]));
-            ValidReturnTypes = types1;
-        }
+        private static readonly uint Float = 3;
+        private static readonly uint FloatArray = 6;
+        private static readonly uint Int = 1;
+        private static readonly uint IntArray = 5;
+        private static readonly uint String = 2;
+        private static Dictionary<Type, int> StructPrimitiveSizeMap = new Dictionary<Type, int>();
+        private static readonly uint Uint64 = 8;
+        private static readonly uint Uint64Array = 9;
+        private static HashSet<Type> ValidReturnTypes = new HashSet<Type>()
+    {
+      typeof (void),
+      typeof (bool),
+      typeof (byte),
+      typeof (short),
+      typeof (int),
+      typeof (long),
+      typeof (ushort),
+      typeof (uint),
+      typeof (ulong),
+      typeof (float),
+      typeof (double),
+      typeof (string),
+      typeof (bool[]),
+      typeof (byte[]),
+      typeof (short[]),
+      typeof (int[]),
+      typeof (long[]),
+      typeof (ushort[]),
+      typeof (uint[]),
+      typeof (ulong[]),
+      typeof (float[]),
+      typeof (double[]),
+      typeof (string[])
+    };
+        private static Dictionary<Type, int> ValueTypeSizeMap = new Dictionary<Type, int>()
+    {
+      {
+        typeof (bool),
+        4
+      },
+      {
+        typeof (byte),
+        1
+      },
+      {
+        typeof (short),
+        2
+      },
+      {
+        typeof (int),
+        4
+      },
+      {
+        typeof (long),
+        8
+      },
+      {
+        typeof (ushort),
+        2
+      },
+      {
+        typeof (uint),
+        4
+      },
+      {
+        typeof (ulong),
+        8
+      },
+      {
+        typeof (float),
+        4
+      },
+      {
+        typeof (double),
+        8
+      }
+    };
+        private static readonly uint Void = 0;
+        public static readonly uint JRPCVersion = 2;
 
         private static T[] ArrayReturn<T>(this IXboxConsole console, uint Address, uint Size)
         {
-            if (Size == 0)
-            {
+            if (Size == 0U)
                 return new T[1];
-            }
             Type type = typeof(T);
             object obj = new object();
             if (type == typeof(short))
-            {
-                obj = console.ReadInt16(Address, Size);
-            }
+                obj = (object)console.ReadInt16(Address, Size);
             if (type == typeof(ushort))
-            {
-                obj = console.ReadUInt16(Address, Size);
-            }
+                obj = (object)console.ReadUInt16(Address, Size);
             if (type == typeof(int))
-            {
-                obj = console.ReadInt32(Address, Size);
-            }
+                obj = (object)console.ReadInt32(Address, Size);
             if (type == typeof(uint))
-            {
-                obj = console.ReadUInt32(Address, Size);
-            }
+                obj = (object)console.ReadUInt32(Address, Size);
             if (type == typeof(long))
-            {
-                obj = console.ReadInt64(Address, Size);
-            }
+                obj = (object)console.ReadInt64(Address, Size);
             if (type == typeof(ulong))
-            {
-                obj = console.ReadUInt64(Address, Size);
-            }
+                obj = (object)console.ReadUInt64(Address, Size);
             if (type == typeof(float))
-            {
-                obj = console.ReadFloat(Address, Size);
-            }
+                obj = (object)console.ReadFloat(Address, Size);
             if (type == typeof(byte))
-            {
-                obj = console.GetMemory(Address, Size);
-            }
+                obj = (object)console.GetMemory(Address, Size);
             return (T[])obj;
         }
-
-        /// <summary>
-        /// EDITED:  Do Not Use
-        /// </summary>
-        private static object CallArgs(IXboxConsole console, bool SystemThread, uint Type, System.Type t, string module, int ordinal, uint Address, uint ArraySize, params object[] Arguments)
+        private static object CallArgs(IXboxConsole console, bool SystemThread, uint Type, Type t, string module, int ordinal, uint Address, uint ArraySize, params object[] Arguments)
         {
-
+            string str2;
+            ulong[] numArray4;
+            object[] objArray;
+            string text2;
+            if (!IsValidReturnType(t))
             {
-                object[] name;
-                int i;
-                object obj;
-                string str;
-                string[] strArrays;
-                string str1;
-                object obj1;
-                if (!IsValidReturnType(t))
+                objArray = new object[] { "Invalid type ", t.Name, Environment.NewLine, "JRPC only supports: bool, byte, short, int, long, ushort, uint, ulong, float, double" };
+                throw new Exception(string.Concat(objArray));
+            }
+            console.ConnectTimeout = console.ConversationTimeout = 0x3d_0900;
+            object[] index = new object[] { "consolefeatures ver=", JRPCVersion, " type=", Type };
+            index[4] = SystemThread ? " system" : "";
+            if (module == null)
+            {
+                text2 = "";
+            }
+            else
+            {
+                object[] objArray3 = new object[] { " module=\"", module, "\" ord=", ordinal };
+                text2 = string.Concat(objArray3);
+            }
+            index[5] = text2;
+            index[6] = " as=";
+            index[7] = ArraySize;
+            index[8] = " params=\"A\\";
+            index[9] = Address.ToString("X");
+            index[10] = @"\A\";
+            index[11] = Arguments.Length;
+            index[12] = @"\";
+            string command = string.Concat(index);
+            if (Arguments.Length > 0x25)
+            {
+                throw new Exception("Can not use more than 37 paramaters in a call");
+            }
+            object[] objArray4 = Arguments;
+            int num16 = 0;
+            while (true)
+            {
+                if (num16 < objArray4.Length)
                 {
-                    name = new object[] { "Invalid type ", t.Name, Environment.NewLine, "JRPC only supports: bool, byte, short, int, long, ushort, uint, ulong, float, double" };
-                    throw new Exception(string.Concat(name));
-                }
-
-                console.ConversationTimeout = 4000000;
-                console.ConnectTimeout = 4000000;
-                object[] jRPCVersion = new object[] { "consolefeatures ver=", JRPCVersion, " type=", Type, null, null, null, null, null, null, null, null, null };
-                jRPCVersion[4] = (SystemThread ? " system" : string.Empty);
-                object[] objArray = jRPCVersion;
-                if (module != null)
-                {
-                    object[] objArray1 = new object[] { " module=\"", module, "\" ord=", ordinal };
-                    obj1 = string.Concat(objArray1);
-                }
-                else
-                {
-                    obj1 = string.Empty;
-                }
-                objArray[5] = obj1;
-                jRPCVersion[6] = " as=";
-                jRPCVersion[7] = ArraySize;
-                jRPCVersion[8] = " params=\"A\\";
-                jRPCVersion[9] = Address.ToString("X");
-                jRPCVersion[10] = "\\A\\";
-                jRPCVersion[11] = Arguments.Length;
-                jRPCVersion[12] = "\\";
-                string str2 = string.Concat(jRPCVersion);
-                if (Arguments.Length > 37)
-                {
-                    throw new Exception("Can not use more than 37 paramaters in a call");
-                }
-                object[] arguments = Arguments;
-                for (i = 0; i < arguments.Length; i++)
-                {
-                    object obj2 = arguments[i];
+                    string[] strArray;
+                    object obj2 = objArray4[num16];
                     bool flag = false;
                     if (obj2 is uint)
                     {
-                        obj = str2;
-                        object[] num2 = new object[] { obj, Int, "\\", UIntToInt((uint)obj2), "\\" };
-                        str2 = string.Concat(num2);
+                        object[] objArray5 = new object[] { command, Int, @"\", UIntToInt((uint)obj2), @"\" };
+                        command = string.Concat(objArray5);
                         flag = true;
                     }
-                    if (obj2 is int || obj2 is bool || obj2 is byte)
+                    if ((obj2 is int) || obj2 is bool || (obj2 is byte))
                     {
-                        if (!(obj2 is bool))
+                        if (obj2 is bool flag1)
                         {
-                            object obj3 = str2;
-                            object[] objArray2 = new object[] { obj3, Int, "\\", null, null };
-                            objArray2[3] = (obj2 is byte ? Convert.ToByte(obj2).ToString() : Convert.ToInt32(obj2).ToString());
-                            objArray2[4] = "\\";
-                            str2 = string.Concat(objArray2);
+                            object[] objArray6 = new object[] { command, Int, "/", Convert.ToInt32((bool)obj2), @"\" };
+                            command = string.Concat(objArray6);
                         }
                         else
                         {
-                            object obj4 = str2;
-                            object[] num3 = new object[] { obj4, Int, "/", Convert.ToInt32((bool)obj2), "\\" };
-                            str2 = string.Concat(num3);
+                            object[] objArray7 = new object[] { command, Int, @"\" };
+                            objArray7[3] = (obj2 is byte) ? Convert.ToByte(obj2).ToString() : Convert.ToInt32(obj2).ToString();
+                            objArray7[4] = @"\";
+                            command = string.Concat(objArray7);
                         }
                         flag = true;
                     }
-                    else if (obj2 is int[] || obj2 is uint[])
+                    else if ((obj2 is int[]) || (obj2 is uint[]))
                     {
-                        byte[] numArray = IntArrayToByte((int[])obj2);
-                        object obj5 = str2;
-                        object[] str3 = new object[] { obj5, ByteArray.ToString(), "/", numArray.Length, "\\" };
-                        str2 = string.Concat(str3);
-                        for (int j = 0; j < numArray.Length; j++)
+                        byte[] buffer = IntArrayToByte((int[])obj2);
+                        object[] objArray8 = new object[] { command, ByteArray.ToString(), "/", buffer.Length, @"\" };
+                        command = string.Concat(objArray8);
+                        int num = 0;
+                        while (true)
                         {
-                            str2 = string.Concat(str2, numArray[j].ToString("X2"));
+                            if (num >= buffer.Length)
+                            {
+                                command = command + @"\";
+                                flag = true;
+                                break;
+                            }
+                            command = command + buffer[num].ToString("X2");
+                            num++;
                         }
-                        str2 = string.Concat(str2, "\\");
-                        flag = true;
                     }
                     else if (obj2 is string)
                     {
-                        string str4 = (string)obj2;
-                        object obj6 = str2;
-                        object[] objArray3 = new object[] { obj6, ByteArray.ToString(), "/", str4.Length, "\\", ((string)obj2).ToHexString(), "\\" };
-                        str2 = string.Concat(objArray3);
+                        object[] objArray9 = new object[] { command, ByteArray.ToString(), "/", ((string)obj2).Length, @"\", ((string)obj2).ToHexString(), @"\" };
+                        command = string.Concat(objArray9);
                         flag = true;
                     }
                     else if (obj2 is double)
                     {
-                        double num4 = (double)obj2;
-                        str = str2;
-                        strArrays = new string[] { str, Float.ToString(), "\\", num4.ToString(), "\\" };
-                        str2 = string.Concat(strArrays);
+                        double num2 = (double)obj2;
+                        strArray = new string[] { command, Float.ToString(), @"\", num2.ToString(), @"\" };
+                        command = string.Concat(strArray);
                         flag = true;
                     }
                     else if (obj2 is float)
                     {
-                        float single = (float)obj2;
-                        str = str2;
-                        strArrays = new string[] { str, Float.ToString(), "\\", single.ToString(), "\\" };
-                        str2 = string.Concat(strArrays);
+                        float num3 = (float)obj2;
+                        strArray = new string[] { command, Float.ToString(), @"\", num3.ToString(), @"\" };
+                        command = string.Concat(strArray);
                         flag = true;
                     }
-                    else if (obj2 is float[])
+                    else if (!(obj2 is float[]))
                     {
-                        float[] singleArray = (float[])obj2;
-                        str = str2;
-                        strArrays = new string[] { str, ByteArray.ToString(), "/", null, null };
-                        int length = singleArray.Length * 4;
-                        strArrays[3] = length.ToString();
-                        strArrays[4] = "\\";
-                        str2 = string.Concat(strArrays);
-                        for (int k = 0; k < singleArray.Length; k++)
+                        if (obj2 is byte[])
                         {
-                            byte[] bytes = BitConverter.GetBytes(singleArray[k]);
-                            Array.Reverse(bytes);
-                            for (int l = 0; l < 4; l++)
+                            byte[] buffer3 = (byte[])obj2;
+                            objArray = new object[] { command, ByteArray.ToString(), "/", buffer3.Length, @"\" };
+                            command = string.Concat(objArray);
+                            int num6 = 0;
+                            while (true)
                             {
-                                str2 = string.Concat(str2, bytes[l].ToString("X2"));
+                                if (num6 >= buffer3.Length)
+                                {
+                                    command = command + @"\";
+                                    flag = true;
+                                    break;
+                                }
+                                command = command + buffer3[num6].ToString("X2");
+                                num6++;
                             }
                         }
-                        str2 = string.Concat(str2, "\\");
-                        flag = true;
                     }
-                    else if (obj2 is byte[])
+                    else
                     {
-                        byte[] numArray1 = (byte[])obj2;
-                        obj = str2;
-                        name = new object[] { obj, ByteArray.ToString(), "/", numArray1.Length, "\\" };
-                        str2 = string.Concat(name);
-                        for (int m = 0; m < numArray1.Length; m++)
+                        float[] numArray = (float[])obj2;
+                        strArray = new string[] { command, ByteArray.ToString(), "/", (numArray.Length * 4).ToString(), @"\" };
+                        command = string.Concat(strArray);
+                        int num4 = 0;
+                        while (true)
                         {
-                            str2 = string.Concat(str2, numArray1[m].ToString("X2"));
+                            if (num4 >= numArray.Length)
+                            {
+                                command = command + @"\";
+                                flag = true;
+                                break;
+                            }
+                            byte[] bytes = BitConverter.GetBytes(numArray[num4]);
+                            Array.Reverse(bytes);
+                            int num5 = 0;
+                            while (true)
+                            {
+                                if (num5 >= 4)
+                                {
+                                    num4++;
+                                    break;
+                                }
+                                command = command + bytes[num5].ToString("X2");
+                                num5++;
+                            }
                         }
-                        str2 = string.Concat(str2, "\\");
-                        flag = true;
                     }
                     if (!flag)
                     {
-                        str = str2;
-                        strArrays = new string[] { str, Uint64.ToString(), "\\", null, null };
-                        ulong num5 = ConvertToUInt64(obj2);
-                        strArrays[3] = num5.ToString();
-                        strArrays[4] = "\\";
-                        str2 = string.Concat(strArrays);
+                        strArray = new string[] { command, Uint64.ToString(), @"\", ConvertToUInt64(obj2).ToString(), @"\" };
+                        command = string.Concat(strArray);
                     }
+                    num16++;
+                    continue;
                 }
-                str2 = string.Concat(str2, "\"");
-                string str5 = SendCommand(console, str2);
-                string str6 = "buf_addr=";
-                while (str5.Contains(str6))
+                command = command + "\"";
+                str2 = SendCommand(console, command);
+                string str4 = "buf_addr=";
+                while (true)
                 {
-                    Thread.Sleep(250);
-                    uint num6 = uint.Parse(str5.Substring(str5.find(str6) + str6.Length), NumberStyles.HexNumber);
-                    str5 = SendCommand(console, string.Concat("consolefeatures ", str6, "0x", num6.ToString("X")));
-                }
-                console.ConversationTimeout = 2000;
-                console.ConnectTimeout = 5000;
-                switch (Type)
-                {
-                    case 1:
-                        {
-                            uint num7 = uint.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                            if (t == typeof(uint))
+                    if (str2.Contains(str4))
+                    {
+                        Thread.Sleep(250);
+                        str2 = SendCommand(console, "consolefeatures " + str4 + "0x" + uint.Parse(str2.Substring(str2.find(str4) + str4.Length), NumberStyles.HexNumber).ToString("X"));
+                        continue;
+                    }
+                    console.ConversationTimeout = 0x7d0;
+                    console.ConnectTimeout = 0x1388;
+                    switch (Type)
+                    {
+                        case 1:
                             {
-                                return num7;
-                            }
-                            if (t == typeof(int))
-                            {
-                                return UIntToInt(num7);
-                            }
-                            if (t == typeof(short))
-                            {
-                                return short.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                            }
-                            if (t != typeof(ushort))
-                            {
-                                goto case 7;
-                            }
-                            return ushort.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                        }
-                    case 2:
-                        {
-                            string str7 = str5.Substring(str5.find(" ") + 1);
-                            if (t == typeof(string))
-                            {
-                                return str7;
-                            }
-                            if (t != typeof(char[]))
-                            {
-                                goto case 7;
-                            }
-                            return str7.ToCharArray();
-                        }
-                    case 3:
-                        {
-                            if (t == typeof(double))
-                            {
-                                return double.Parse(str5.Substring(str5.find(" ") + 1));
-                            }
-                            if (t != typeof(float))
-                            {
-                                goto case 7;
-                            }
-                            return float.Parse(str5.Substring(str5.find(" ") + 1));
-                        }
-                    case 4:
-                        {
-                            byte num8 = byte.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                            if (t == typeof(byte))
-                            {
-                                return num8;
-                            }
-                            if (t != typeof(char))
-                            {
-                                goto case 7;
-                            }
-                            return (char)num8;
-                        }
-                    case 5:
-                    case 6:
-                    case 7:
-                        {
-                            if (Type == 5)
-                            {
-                                string str8 = str5.Substring(str5.find(" ") + 1);
-                                int num9 = 0;
-                                string str9 = string.Empty;
-                                uint[] numArray2 = new uint[8];
-                                str1 = str8;
-                                for (i = 0; i < str1.Length; i++)
+                                uint num8 = uint.Parse(str2.Substring(str2.find(" ") + 1), NumberStyles.HexNumber);
+                                if (ReferenceEquals(t, typeof(uint)))
                                 {
-                                    char chr = str1[i];
-                                    if (chr == ',' || chr == ';')
+                                    return num8;
+                                }
+                                if (ReferenceEquals(t, typeof(int)))
+                                {
+                                    return UIntToInt(num8);
+                                }
+                                if (ReferenceEquals(t, typeof(short)))
+                                {
+                                    return short.Parse(str2.Substring(str2.find(" ") + 1), NumberStyles.HexNumber);
+                                }
+                                if (!ReferenceEquals(t, typeof(ushort)))
+                                {
+                                    break;
+                                }
+                                return ushort.Parse(str2.Substring(str2.find(" ") + 1), NumberStyles.HexNumber);
+                            }
+                        case 2:
+                            {
+                                string str5 = str2.Substring(str2.find(" ") + 1);
+                                if (ReferenceEquals(t, typeof(string)))
+                                {
+                                    return str5;
+                                }
+                                if (!ReferenceEquals(t, typeof(char[])))
+                                {
+                                    break;
+                                }
+                                return str5.ToCharArray();
+                            }
+                        case 3:
+                            if (ReferenceEquals(t, typeof(double)))
+                            {
+                                return double.Parse(str2.Substring(str2.find(" ") + 1));
+                            }
+                            if (!ReferenceEquals(t, typeof(float)))
+                            {
+                                break;
+                            }
+                            return float.Parse(str2.Substring(str2.find(" ") + 1));
+
+                        case 4:
+                            {
+                                byte num9 = byte.Parse(str2.Substring(str2.find(" ") + 1), NumberStyles.HexNumber);
+                                if (ReferenceEquals(t, typeof(byte)))
+                                {
+                                    return num9;
+                                }
+                                if (!ReferenceEquals(t, typeof(char)))
+                                {
+                                    break;
+                                }
+                                return (char)num9;
+                            }
+                        case 8:
+                            if (ReferenceEquals(t, typeof(long)))
+                            {
+                                return long.Parse(str2.Substring(str2.find(" ") + 1), NumberStyles.HexNumber);
+                            }
+                            if (!ReferenceEquals(t, typeof(ulong)))
+                            {
+                                break;
+                            }
+                            return ulong.Parse(str2.Substring(str2.find(" ") + 1), NumberStyles.HexNumber);
+
+                        default:
+                            break;
+                    }
+                    if (Type != 5)
+                    {
+                        if (Type != 6)
+                        {
+                            if (Type != 7)
+                            {
+                                if (Type != Uint64Array)
+                                {
+                                    goto TR_0026;
+                                }
+                                else
+                                {
+                                    int num13 = 0;
+                                    string s = "";
+                                    numArray4 = new ulong[ArraySize];
+                                    foreach (char ch4 in str2.Substring(str2.find(" ") + 1))
                                     {
-                                        numArray2[num9] = uint.Parse(str9, NumberStyles.HexNumber);
-                                        num9++;
-                                        str9 = string.Empty;
-                                    }
-                                    else
-                                    {
-                                        str9 = string.Concat(str9, chr.ToString());
-                                    }
-                                    if (chr == ';')
-                                    {
-                                        break;
+                                        if ((ch4 != ',') && (ch4 != ';'))
+                                        {
+                                            s = s + ch4.ToString();
+                                        }
+                                        else
+                                        {
+                                            numArray4[num13] = ulong.Parse(s);
+                                            num13++;
+                                            s = "";
+                                        }
+                                        if (ch4 == ';')
+                                        {
+                                            break;
+                                        }
                                     }
                                 }
-                                return numArray2;
                             }
-                            if (Type == 6)
+                            else
                             {
-                                string str10 = str5.Substring(str5.find(" ") + 1);
-                                int num10 = 0;
-                                string str11 = string.Empty;
-                                float[] singleArray1 = new float[ArraySize];
-                                str1 = str10;
-                                for (i = 0; i < str1.Length; i++)
-                                {
-                                    char chr1 = str1[i];
-                                    if (chr1 == ',' || chr1 == ';')
-                                    {
-                                        singleArray1[num10] = float.Parse(str11);
-                                        num10++;
-                                        str11 = string.Empty;
-                                    }
-                                    else
-                                    {
-                                        str11 = string.Concat(str11, chr1.ToString());
-                                    }
-                                    if (chr1 == ';')
-                                    {
-                                        break;
-                                    }
-                                }
-                                return singleArray1;
-                            }
-                            if (Type == 7)
-                            {
-                                string str12 = str5.Substring(str5.find(" ") + 1);
-                                int num11 = 0;
-                                string str13 = string.Empty;
-                                byte[] numArray3 = new byte[ArraySize];
-                                str1 = str12;
-                                for (i = 0; i < str1.Length; i++)
-                                {
-                                    char chr2 = str1[i];
-                                    if (chr2 == ',' || chr2 == ';')
-                                    {
-                                        numArray3[num11] = byte.Parse(str13);
-                                        num11++;
-                                        str13 = string.Empty;
-                                    }
-                                    else
-                                    {
-                                        str13 = string.Concat(str13, chr2.ToString());
-                                    }
-                                    if (chr2 == ';')
-                                    {
-                                        break;
-                                    }
-                                }
-                                return numArray3;
-                            }
-                            if (Type == Uint64Array)
-                            {
-                                string str14 = str5.Substring(str5.find(" ") + 1);
                                 int num12 = 0;
-                                string str15 = string.Empty;
-                                ulong[] numArray4 = new ulong[ArraySize];
-                                str1 = str14;
-                                for (i = 0; i < str1.Length; i++)
+                                string s = "";
+                                byte[] buffer4 = new byte[ArraySize];
+                                foreach (char ch3 in str2.Substring(str2.find(" ") + 1))
                                 {
-                                    char chr3 = str1[i];
-                                    if (chr3 == ',' || chr3 == ';')
+                                    if ((ch3 != ',') && (ch3 != ';'))
                                     {
-                                        numArray4[num12] = ulong.Parse(str15);
-                                        num12++;
-                                        str15 = string.Empty;
+                                        s = s + ch3.ToString();
                                     }
                                     else
                                     {
-                                        str15 = string.Concat(str15, chr3.ToString());
+                                        buffer4[num12] = byte.Parse(s);
+                                        num12++;
+                                        s = "";
                                     }
-                                    if (chr3 == ';')
+                                    if (ch3 == ';')
                                     {
                                         break;
                                     }
                                 }
-                                if (t == typeof(ulong))
-                                {
-                                    return numArray4;
-                                }
-                                if (t == typeof(long))
-                                {
-                                    long[] numArray5 = new long[ArraySize];
-                                    for (int n = 0; n < ArraySize; n++)
-                                    {
-                                        numArray5[n] = BitConverter.ToInt64(BitConverter.GetBytes(numArray4[n]), 0);
-                                    }
-                                    return numArray5;
-                                }
+                                return buffer4;
                             }
-                            if (Type == Void)
-                            {
-                                return 0;
-                            }
-                            return ulong.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
                         }
-                    case 8:
+                        else
                         {
-                            if (t == typeof(long))
+                            int num11 = 0;
+                            string s = "";
+                            float[] numArray3 = new float[ArraySize];
+                            foreach (char ch2 in str2.Substring(str2.find(" ") + 1))
                             {
-                                return long.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
+                                if ((ch2 != ',') && (ch2 != ';'))
+                                {
+                                    s = s + ch2.ToString();
+                                }
+                                else
+                                {
+                                    numArray3[num11] = float.Parse(s);
+                                    num11++;
+                                    s = "";
+                                }
+                                if (ch2 == ';')
+                                {
+                                    break;
+                                }
                             }
-                            if (t != typeof(ulong))
-                            {
-                                goto case 7;
-                            }
-                            return ulong.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
+                            return numArray3;
                         }
-                    default:
+                    }
+                    else
+                    {
+                        int num10 = 0;
+                        string s = "";
+                        uint[] numArray2 = new uint[8];
+                        foreach (char ch in str2.Substring(str2.find(" ") + 1))
                         {
-                            goto case 7;
+                            if ((ch != ',') && (ch != ';'))
+                            {
+                                s = s + ch.ToString();
+                            }
+                            else
+                            {
+                                numArray2[num10] = uint.Parse(s, NumberStyles.HexNumber);
+                                num10++;
+                                s = "";
+                            }
+                            if (ch == ';')
+                            {
+                                break;
+                            }
                         }
+                        return numArray2;
+                    }
+                    break;
                 }
+                break;
             }
+            if (ReferenceEquals(t, typeof(ulong)))
+            {
+                return numArray4;
+            }
+            if (ReferenceEquals(t, typeof(long)))
+            {
+                long[] numArray5 = new long[ArraySize];
+                for (int i = 0; i < ArraySize; i++)
+                {
+                    numArray5[i] = BitConverter.ToInt64(BitConverter.GetBytes(numArray4[i]), 0);
+                }
+                return numArray5;
+            }
+        TR_0026:
+            return ((Type != Void) ? ((object)ulong.Parse(str2.Substring(str2.find(" ") + 1), NumberStyles.HexNumber)) : ((object)0));
         }
 
         private static byte[] IntArrayToByte(int[] iArray)
         {
-            byte[] bytes = new byte[iArray.Length * 4];
+            byte[] numArray = new byte[iArray.Length * 4];
+            int index1 = 0;
             int num = 0;
-            int num1 = 0;
-            while (num < iArray.Length)
+            while (index1 < iArray.Length)
             {
-                for (int i = 0; i < 4; i++)
-                {
-                    bytes[num1 + i] = BitConverter.GetBytes(iArray[num])[i];
-                }
-                num++;
-                num1 += 4;
+                for (int index2 = 0; index2 < 4; ++index2)
+                    numArray[num + index2] = BitConverter.GetBytes(iArray[index1])[index2];
+                ++index1;
+                num += 4;
             }
-            return bytes;
+            return numArray;
         }
 
         private static void ReverseBytes(byte[] buffer, int groupSize)
         {
             if (buffer.Length % groupSize != 0)
+                throw new ArgumentException("Group size must be a multiple of the buffer length", nameof(groupSize));
+            for (int index1 = 0; index1 < buffer.Length; index1 += groupSize)
             {
-                throw new ArgumentException("Group size must be a multiple of the buffer length", "groupSize");
-            }
-            for (int i = 0; i < buffer.Length; i += groupSize)
-            {
-                int num = i;
-                for (int j = i + groupSize - 1; num < j; j--)
+                int index2 = index1;
+                for (int index3 = index1 + groupSize - 1; index2 < index3; --index3)
                 {
-                    byte num1 = buffer[num];
-                    buffer[num] = buffer[j];
-                    buffer[j] = num1;
-                    num++;
+                    byte num = buffer[index2];
+                    buffer[index2] = buffer[index3];
+                    buffer[index3] = num;
+                    ++index2;
                 }
             }
         }
 
         private static string SendCommand(IXboxConsole console, string Command)
         {
-            string str = null;
+            int connectionId = (int)JRPC.connectionId;
+            string Response;
             try
             {
-                console.SendTextCommand(Command, out str);
-                if (str.Contains("error="))
-                {
-                    throw new Exception(str.Substring(11));
-                }
-                if (str.Contains("DEBUG"))
-                {
+                console.SendTextCommand(JRPC.connectionId, Command, out Response);
+                if (Response.Contains("error="))
+                    throw new Exception(Response.Substring(11));
+                if (Response.Contains("DEBUG"))
                     throw new Exception("JRPC is not installed on the current console");
-                }
             }
-            catch (COMException cOMException1)
+            catch (COMException ex)
             {
-                COMException cOMException = cOMException1;
-                if (cOMException.ErrorCode != UIntToInt(2099642361))
-                {
-                    throw cOMException;
-                }
-                throw new Exception("JRPC is not installed on the current console");
+                if (ex.ErrorCode == JRPC.UIntToInt(2195324935U))
+                    throw new Exception("JRPC is not installed on the current console");
+                throw ex;
             }
-            return str;
+            return Response;
         }
 
-        private static uint TypeToType<T>(bool Array)
-        where T : struct
+        private static uint TypeToType<T>(bool Array) where T : struct
         {
             Type type = typeof(T);
-            if (type == typeof(int) || type == typeof(uint) || type == typeof(short) || type == typeof(ushort))
-            {
-                if (Array)
-                {
-                    return IntArray;
-                }
-                return Int;
-            }
+            if (type == typeof(int) || type == typeof(uint) || (type == typeof(short) || type == typeof(ushort)))
+                return Array ? JRPC.IntArray : JRPC.Int;
             if (type == typeof(string) || type == typeof(char[]))
-            {
-                return String;
-            }
-            if (type == typeof(float) || type == typeof(double))
-            {
-                if (Array)
-                {
-                    return FloatArray;
-                }
-                return Float;
-            }
-            if (type == typeof(byte) || type == typeof(char))
-            {
-                if (Array)
-                {
-                    return ByteArray;
-                }
-                return Byte;
-            }
-            if (type != typeof(ulong) && type != typeof(long))
-            {
-                return Uint64;
-            }
-            if (Array)
-            {
-                return Uint64Array;
-            }
-            return Uint64;
+                return JRPC.String;
+            return type == typeof(float) || type == typeof(double) ? (Array ? JRPC.FloatArray : JRPC.Float) : (type == typeof(byte) || type == typeof(char) ? (Array ? JRPC.ByteArray : JRPC.Byte) : ((type == typeof(ulong) || type == typeof(long)) && Array ? JRPC.Uint64Array : JRPC.Uint64));
         }
 
-        private static int UIntToInt(uint Value)
-        {
-            return BitConverter.ToInt32(BitConverter.GetBytes(Value), 0);
-        }
+        private static int UIntToInt(uint Value) => BitConverter.ToInt32(BitConverter.GetBytes(Value), 0);
 
         internal static ulong ConvertToUInt64(object o)
         {
-            if (o is bool)
+            switch (o)
             {
-                if ((bool)o)
-                {
-                    return (ulong)1;
-                }
-                return (ulong)0;
+                case bool flag:
+                    return flag ? 1UL : 0UL;
+                case byte num:
+                    return (ulong)num;
+                case short num:
+                    return (ulong)num;
+                case int num:
+                    return (ulong)num;
+                case long num:
+                    return (ulong)num;
+                case ushort num:
+                    return (ulong)num;
+                case uint num:
+                    return (ulong)num;
+                case ulong num:
+                    return num;
+                case float num:
+                    return (ulong)BitConverter.DoubleToInt64Bits((double)num);
+                case double num:
+                    return (ulong)BitConverter.DoubleToInt64Bits(num);
+                default:
+                    return 0;
             }
-            if (o is byte)
-            {
-                return (ulong)((byte)o);
-            }
-            if (o is short)
-            {
-                return (ulong)((short)o);
-            }
-            if (o is int)
-            {
-                return (ulong)(int)o;
-            }
-            if (o is long)
-            {
-                return (ulong)o;
-            }
-            if (o is ushort)
-            {
-                return (ushort)o;
-            }
-            if (o is uint)
-            {
-                return (uint)o;
-            }
-            if (o is ulong)
-            {
-                return (ulong)o;
-            }
-            if (o is float)
-            {
-                return (ulong)BitConverter.DoubleToInt64Bits((double)((float)o));
-            }
-            if (!(o is double))
-            {
-                return 0;
-            }
-            return (ulong)BitConverter.DoubleToInt64Bits((double)o);
         }
 
-        internal static bool IsValidReturnType(Type t)
+        internal static bool IsValidReturnType(Type t) => JRPC.ValidReturnTypes.Contains(t);
+
+        internal static bool IsValidStructType(Type t) => !t.IsPrimitive && t.IsValueType;
+
+        public static T Call<T>(this IXboxConsole console, uint Address, params object[] Arguments) where T : struct => (T)JRPC.CallArgs(console, true, JRPC.TypeToType<T>(false), typeof(T), (string)null, 0, Address, 0U, Arguments);
+
+        public static T Call<T>(
+          this IXboxConsole console,
+          string module,
+          int ordinal,
+          params object[] Arguments)
+          where T : struct
         {
-            return ValidReturnTypes.Contains(t);
+            return (T)JRPC.CallArgs(console, true, JRPC.TypeToType<T>(false), typeof(T), module, ordinal, 0U, 0U, Arguments);
         }
 
-        internal static bool IsValidStructType(Type t)
+        public static T Call<T>(
+          this IXboxConsole console,
+          JRPC.ThreadType Type,
+          uint Address,
+          params object[] Arguments)
+          where T : struct
         {
-            if (t.IsPrimitive)
-            {
-                return false;
-            }
-            return t.IsValueType;
+            return (T)JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.TypeToType<T>(false), typeof(T), (string)null, 0, Address, 0U, Arguments);
         }
 
-        public static T Call<T>(this IXboxConsole console, uint Address, params object[] Arguments)
-        where T : struct
+        public static T Call<T>(
+          this IXboxConsole console,
+          JRPC.ThreadType Type,
+          string module,
+          int ordinal,
+          params object[] Arguments)
+          where T : struct
         {
-            return (T)CallArgs(console, true, TypeToType<T>(false), typeof(T), null, 0, Address, 0, Arguments);
+            return (T)JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.TypeToType<T>(false), typeof(T), module, ordinal, 0U, 0U, Arguments);
         }
 
-        public static T Call<T>(this IXboxConsole console, string module, int ordinal, params object[] Arguments)
-        where T : struct
+        public static T[] CallArray<T>(
+          this IXboxConsole console,
+          uint Address,
+          uint ArraySize,
+          params object[] Arguments)
+          where T : struct
         {
-            return (T)CallArgs(console, true, TypeToType<T>(false), typeof(T), module, ordinal, 0, 0, Arguments);
+            return ArraySize == 0U ? new T[1] : (T[])JRPC.CallArgs(console, true, JRPC.TypeToType<T>(true), typeof(T), (string)null, 0, Address, ArraySize, Arguments);
         }
 
-        public static T Call<T>(this IXboxConsole console, ThreadType Type, uint Address, params object[] Arguments)
-        where T : struct
+        public static T[] CallArray<T>(
+          this IXboxConsole console,
+          string module,
+          int ordinal,
+          uint ArraySize,
+          params object[] Arguments)
+          where T : struct
         {
-            return (T)CallArgs(console, Type == ThreadType.System, TypeToType<T>(false), typeof(T), null, 0, Address, 0, Arguments);
+            return ArraySize == 0U ? new T[1] : (T[])JRPC.CallArgs(console, true, JRPC.TypeToType<T>(true), typeof(T), module, ordinal, 0U, ArraySize, Arguments);
         }
 
-        public static T Call<T>(this IXboxConsole console, ThreadType Type, string module, int ordinal, params object[] Arguments)
-        where T : struct
+        public static T[] CallArray<T>(
+          this IXboxConsole console,
+          JRPC.ThreadType Type,
+          uint Address,
+          uint ArraySize,
+          params object[] Arguments)
+          where T : struct
         {
-            return (T)CallArgs(console, Type == ThreadType.System, TypeToType<T>(false), typeof(T), module, ordinal, 0, 0, Arguments);
+            return ArraySize == 0U ? new T[1] : (T[])JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.TypeToType<T>(true), typeof(T), (string)null, 0, Address, ArraySize, Arguments);
         }
 
-        public static T[] CallArray<T>(this IXboxConsole console, uint Address, uint ArraySize, params object[] Arguments)
-        where T : struct
+        public static T[] CallArray<T>(
+          this IXboxConsole console,
+          JRPC.ThreadType Type,
+          string module,
+          int ordinal,
+          uint ArraySize,
+          params object[] Arguments)
+          where T : struct
         {
-            if (ArraySize == 0)
-            {
-                return new T[1];
-            }
-            return (T[])CallArgs(console, true, TypeToType<T>(true), typeof(T), null, 0, Address, ArraySize, Arguments);
+            return ArraySize == 0U ? new T[1] : (T[])JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.TypeToType<T>(true), typeof(T), module, ordinal, 0U, ArraySize, Arguments);
         }
 
-        public static T[] CallArray<T>(this IXboxConsole console, string module, int ordinal, uint ArraySize, params object[] Arguments)
-        where T : struct
+        public static string CallString(
+          this IXboxConsole console,
+          uint Address,
+          params object[] Arguments)
         {
-            if (ArraySize == 0)
-            {
-                return new T[1];
-            }
-            return (T[])CallArgs(console, true, TypeToType<T>(true), typeof(T), module, ordinal, 0, ArraySize, Arguments);
+            return (string)JRPC.CallArgs(console, true, JRPC.String, typeof(string), (string)null, 0, Address, 0U, Arguments);
         }
 
-        public static T[] CallArray<T>(this IXboxConsole console, ThreadType Type, uint Address, uint ArraySize, params object[] Arguments)
-        where T : struct
+        public static string CallString(
+          this IXboxConsole console,
+          string module,
+          int ordinal,
+          params object[] Arguments)
         {
-            if (ArraySize == 0)
-            {
-                return new T[1];
-            }
-            return (T[])CallArgs(console, Type == ThreadType.System, TypeToType<T>(true), typeof(T), null, 0, Address, ArraySize, Arguments);
+            return (string)JRPC.CallArgs(console, true, JRPC.String, typeof(string), module, ordinal, 0U, 0U, Arguments);
         }
 
-        public static T[] CallArray<T>(this IXboxConsole console, ThreadType Type, string module, int ordinal, uint ArraySize, params object[] Arguments)
-        where T : struct
+        public static string CallString(
+          this IXboxConsole console,
+          JRPC.ThreadType Type,
+          uint Address,
+          params object[] Arguments)
         {
-            if (ArraySize == 0)
-            {
-                return new T[1];
-            }
-            return (T[])CallArgs(console, Type == ThreadType.System, TypeToType<T>(true), typeof(T), module, ordinal, 0, ArraySize, Arguments);
+            return (string)JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.String, typeof(string), (string)null, 0, Address, 0U, Arguments);
         }
 
-        public static string CallString(this IXboxConsole console, uint Address, params object[] Arguments)
+        public static string CallString(
+          this IXboxConsole console,
+          JRPC.ThreadType Type,
+          string module,
+          int ordinal,
+          params object[] Arguments)
         {
-            return (string)CallArgs(console, true, String, typeof(string), null, 0, Address, 0, Arguments);
+            return (string)JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.String, typeof(string), module, ordinal, 0U, 0U, Arguments);
         }
 
-        public static string CallString(this IXboxConsole console, string module, int ordinal, params object[] Arguments)
+        public static void CallVoid(this IXboxConsole console, uint Address, params object[] Arguments) => JRPC.CallArgs(console, true, JRPC.Void, typeof(void), (string)null, 0, Address, 0U, Arguments);
+
+        public static void CallVoid(
+          this IXboxConsole console,
+          string module,
+          int ordinal,
+          params object[] Arguments)
         {
-            return (string)CallArgs(console, true, String, typeof(string), module, ordinal, 0, 0, Arguments);
+            JRPC.CallArgs(console, true, JRPC.Void, typeof(void), module, ordinal, 0U, 0U, Arguments);
         }
 
-        public static string CallString(this IXboxConsole console, ThreadType Type, uint Address, params object[] Arguments)
+        public static void CallVoid(
+          this IXboxConsole console,
+          JRPC.ThreadType Type,
+          uint Address,
+          params object[] Arguments)
         {
-            return (string)CallArgs(console, Type == ThreadType.System, String, typeof(string), null, 0, Address, 0, Arguments);
+            JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.Void, typeof(void), (string)null, 0, Address, 0U, Arguments);
         }
 
-        public static string CallString(this IXboxConsole console, ThreadType Type, string module, int ordinal, params object[] Arguments)
+        public static void CallVoid(
+          this IXboxConsole console,
+          JRPC.ThreadType Type,
+          string module,
+          int ordinal,
+          params object[] Arguments)
         {
-            return (string)CallArgs(console, Type == ThreadType.System, String, typeof(string), module, ordinal, 0, 0, Arguments);
+            JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.Void, typeof(void), module, ordinal, 0U, 0U, Arguments);
         }
 
-        public static void CallVoid(this IXboxConsole console, uint Address, params object[] Arguments)
+        public static bool Connect(
+          this IXboxConsole console,
+          out IXboxConsole Console,
+          string XboxNameOrIP = "default")
         {
-            CallArgs(console, true, Void, typeof(void), null, 0, Address, 0, Arguments);
-        }
-
-        public static void CallVoid(this IXboxConsole console, string module, int ordinal, params object[] Arguments)
-        {
-            CallArgs(console, true, Void, typeof(void), module, ordinal, 0, 0, Arguments);
-        }
-
-        public static void CallVoid(this IXboxConsole console, ThreadType Type, uint Address, params object[] Arguments)
-        {
-            CallArgs(console, Type == ThreadType.System, Void, typeof(void), null, 0, Address, 0, Arguments);
-        }
-
-        public static void CallVoid(this IXboxConsole console, ThreadType Type, string module, int ordinal, params object[] Arguments)
-        {
-            CallArgs(console, Type == ThreadType.System, Void, typeof(void), module, ordinal, 0, 0, Arguments);
-        }
-
-        public static bool Connect(this Xbox console, out Xbox Console, string XboxNameOrIP = "default")
-        {
-            bool flag;
             if (XboxNameOrIP == "default")
-            {
                 XboxNameOrIP = new XboxManager().DefaultConsole;
-            }
             IXboxConsole xboxConsole = new XboxManager().OpenConsole(XboxNameOrIP);
             int num = 0;
-            bool flag1 = false;
-            while (!flag1)
+            bool flag = false;
+            while (!flag)
             {
                 try
                 {
-                    connectionId = 0;
-                    flag1 = true;
-                    continue;
+                    JRPC.connectionId = xboxConsole.OpenConnection((string)null);
+                    flag = true;
                 }
-                catch (COMException cOMException)
+                catch (COMException ex)
                 {
-                    if (cOMException.ErrorCode != UIntToInt(2099642112))
+                    if (ex.ErrorCode == JRPC.UIntToInt(2195325184U))
                     {
-                        flag = false;
-                    }
-                    else if (num < 3)
-                    {
-                        num++;
+                        if (num >= 3)
+                        {
+                            Console = xboxConsole;
+                            return false;
+                        }
+                        ++num;
                         Thread.Sleep(100);
-                        continue;
                     }
                     else
                     {
-                        flag = false;
+                        Console = xboxConsole;
+                        return false;
                     }
                 }
-                Console = console;
-                return flag;
             }
-            Console = console;
+            Console = xboxConsole;
             return true;
         }
 
         public static string ConsoleType(this IXboxConsole console)
         {
-            string str = string.Concat("consolefeatures ver=", JRPCVersion, " type=17 params=\"A\\0\\A\\0\\\"");
-            string str1 = SendCommand(console, str);
-            return str1.Substring(str1.find(" ") + 1);
+            string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=17 params=\"A\\0\\A\\0\\\"";
+            string String = JRPC.SendCommand(console, Command);
+            return String.Substring(String.find(" ") + 1);
         }
 
-        public static void constantMemorySet(this IXboxConsole console, uint Address, uint Value)
+        public static void constantMemorySet(this IXboxConsole console, uint Address, uint Value) => JRPC.constantMemorySetting(console, Address, Value, false, 0U, false, 0U);
+
+        public static void constantMemorySet(
+          this IXboxConsole console,
+          uint Address,
+          uint Value,
+          uint TitleID)
         {
-            constantMemorySetting(console, Address, Value, false, 0, false, 0);
+            JRPC.constantMemorySetting(console, Address, Value, false, 0U, true, TitleID);
         }
 
-        public static void constantMemorySet(this IXboxConsole console, uint Address, uint Value, uint TitleID)
+        public static void constantMemorySet(
+          this IXboxConsole console,
+          uint Address,
+          uint Value,
+          uint IfValue,
+          uint TitleID)
         {
-            constantMemorySetting(console, Address, Value, false, 0, true, TitleID);
+            JRPC.constantMemorySetting(console, Address, Value, true, IfValue, true, TitleID);
         }
 
-        public static void constantMemorySet(this IXboxConsole console, uint Address, uint Value, uint IfValue, uint TitleID)
+        public static void constantMemorySetting(
+          IXboxConsole console,
+          uint Address,
+          uint Value,
+          bool useIfValue,
+          uint IfValue,
+          bool usetitleID,
+          uint TitleID)
         {
-            constantMemorySetting(console, Address, Value, true, IfValue, true, TitleID);
-        }
-
-        public static void constantMemorySetting(IXboxConsole console, uint Address, uint Value, bool useIfValue, uint IfValue, bool usetitleID, uint TitleID)
-        {
-            object[] jRPCVersion = new object[] { "consolefeatures ver=", JRPCVersion, " type=18 params=\"A\\", Address.ToString("X"), "\\A\\5\\", Int, "\\", UIntToInt(Value), "\\", Int, "\\", (useIfValue ? 1 : 0), "\\", Int, "\\", IfValue, "\\", Int, "\\", (usetitleID ? 1 : 0), "\\", Int, "\\", UIntToInt(TitleID), "\\\"" };
-            SendCommand(console, string.Concat(jRPCVersion));
+            string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=18 params=\"A\\" + Address.ToString("X") + "\\A\\5\\" + (object)JRPC.Int + "\\" + (object)JRPC.UIntToInt(Value) + "\\" + (object)JRPC.Int + "\\" + (object)(useIfValue ? 1 : 0) + "\\" + (object)JRPC.Int + "\\" + (object)IfValue + "\\" + (object)JRPC.Int + "\\" + (object)(usetitleID ? 1 : 0) + "\\" + (object)JRPC.Int + "\\" + (object)JRPC.UIntToInt(TitleID) + "\\\"";
+            JRPC.SendCommand(console, Command);
         }
 
         public static int find(this string String, string _Ptr)
         {
             if (_Ptr.Length == 0 || String.Length == 0)
-            {
                 return -1;
-            }
-            for (int i = 0; i < String.Length; i++)
+            for (int index1 = 0; index1 < String.Length; ++index1)
             {
-                if (String[i] == _Ptr[0])
+                if ((int)String[index1] == (int)_Ptr[0])
                 {
                     bool flag = true;
-                    for (int j = 0; j < _Ptr.Length; j++)
+                    for (int index2 = 0; index2 < _Ptr.Length; ++index2)
                     {
-                        if (String[i + j] != _Ptr[j])
-                        {
+                        if ((int)String[index1 + index2] != (int)_Ptr[index2])
                             flag = false;
-                        }
                     }
                     if (flag)
-                    {
-                        return i;
-                    }
+                        return index1;
                 }
             }
             return -1;
@@ -896,241 +842,196 @@ namespace JRPC_Client
 
         public static string GetCPUKey(this IXboxConsole console)
         {
-            string str = string.Concat("consolefeatures ver=", JRPCVersion, " type=10 params=\"A\\0\\A\\0\\\"");
-            string str1 = SendCommand(console, str);
-            return str1.Substring(str1.find(" ") + 1);
+            string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=10 params=\"A\\0\\A\\0\\\"";
+            string String = JRPC.SendCommand(console, Command);
+            return String.Substring(String.find(" ") + 1);
         }
 
         public static uint GetKernalVersion(this IXboxConsole console)
         {
-            string str = string.Concat("consolefeatures ver=", JRPCVersion, " type=13 params=\"A\\0\\A\\0\\\"");
-            string str1 = SendCommand(console, str);
-            return uint.Parse(str1.Substring(str1.find(" ") + 1));
+            string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=13 params=\"A\\0\\A\\0\\\"";
+            string String = JRPC.SendCommand(console, Command);
+            return uint.Parse(String.Substring(String.find(" ") + 1));
         }
 
         public static byte[] GetMemory(this IXboxConsole console, uint Address, uint Length)
         {
-
-            {
-                uint num = 0;
-                byte[] numArray = new byte[Length];
-                console.DebugTarget.GetMemory(Address, Length, numArray, out num);
-                console.DebugTarget.InvalidateMemoryCache(true, Address, Length);
-                return numArray;
-            }
+            uint BytesRead = 0;
+            byte[] Data = new byte[Length];
+            console.DebugTarget.GetMemory(Address, Length, Data, out BytesRead);
+            console.DebugTarget.InvalidateMemoryCache(true, Address, Length);
+            return Data;
         }
 
-        public static uint GetTemperature(this IXboxConsole console, TemperatureFlag TemperatureType)
+        public static uint GetTemperature(
+          this IXboxConsole console,
+          JRPC.TemperatureType TemperatureType)
         {
-            object[] jRPCVersion = new object[] { "consolefeatures ver=", JRPCVersion, " type=15 params=\"A\\0\\A\\1\\", Int, "\\", (int)TemperatureType, "\\\"" };
-            string str = SendCommand(console, string.Concat(jRPCVersion));
-            return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
+            string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=15 params=\"A\\0\\A\\1\\" + (object)JRPC.Int + "\\" + (object)(int)TemperatureType + "\\\"";
+            string String = JRPC.SendCommand(console, Command);
+            return uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
         }
 
         public static void Push(this byte[] InArray, out byte[] OutArray, byte Value)
         {
             OutArray = new byte[InArray.Length + 1];
-            InArray.CopyTo(OutArray, 0);
+            InArray.CopyTo((Array)OutArray, 0);
             OutArray[InArray.Length] = Value;
         }
 
-        public static bool ReadBool(this IXboxConsole console, uint Address)
-        {
-            return console.GetMemory(Address, 1)[0] != 0;
-        }
+        public static bool ReadBool(this IXboxConsole console, uint Address) => console.GetMemory(Address, 1U)[0] != (byte)0;
 
-        public static byte ReadByte(this IXboxConsole console, uint Address)
-        {
-            return console.GetMemory(Address, 1)[0];
-        }
+        public static byte ReadByte(this IXboxConsole console, uint Address) => console.GetMemory(Address, 1U)[0];
 
         public static float ReadFloat(this IXboxConsole console, uint Address)
         {
-            byte[] memory = console.GetMemory(Address, 4);
-            ReverseBytes(memory, 4);
+            byte[] memory = console.GetMemory(Address, 4U);
+            JRPC.ReverseBytes(memory, 4);
             return BitConverter.ToSingle(memory, 0);
         }
 
         public static float[] ReadFloat(this IXboxConsole console, uint Address, uint ArraySize)
         {
-            {
-                float[] single = new float[ArraySize];
-                byte[] memory = console.GetMemory(Address, ArraySize * 4);
-                ReverseBytes(memory, 4);
-                for (int i = 0; i < ArraySize; i++)
-                {
-                    single[i] = BitConverter.ToSingle(memory, i * 4);
-                }
-                return single;
-            }
+            float[] numArray = new float[ArraySize];
+            byte[] memory = console.GetMemory(Address, ArraySize * 4U);
+            JRPC.ReverseBytes(memory, 4);
+            for (int index = 0; (long)index < (long)ArraySize; ++index)
+                numArray[index] = BitConverter.ToSingle(memory, index * 4);
+            return numArray;
         }
 
         public static short ReadInt16(this IXboxConsole console, uint Address)
         {
-            byte[] memory = console.GetMemory(Address, 2);
-            ReverseBytes(memory, 2);
+            byte[] memory = console.GetMemory(Address, 2U);
+            JRPC.ReverseBytes(memory, 2);
             return BitConverter.ToInt16(memory, 0);
         }
 
         public static short[] ReadInt16(this IXboxConsole console, uint Address, uint ArraySize)
         {
-
-            {
-                short[] num = new short[ArraySize];
-                byte[] memory = console.GetMemory(Address, ArraySize * 2);
-                ReverseBytes(memory, 2);
-                for (int i = 0; i < ArraySize; i++)
-                {
-                    num[i] = BitConverter.ToInt16(memory, i * 2);
-                }
-                return num;
-            }
+            short[] numArray = new short[ArraySize];
+            byte[] memory = console.GetMemory(Address, ArraySize * 2U);
+            JRPC.ReverseBytes(memory, 2);
+            for (int index = 0; (long)index < (long)ArraySize; ++index)
+                numArray[index] = BitConverter.ToInt16(memory, index * 2);
+            return numArray;
         }
 
         public static int ReadInt32(this IXboxConsole console, uint Address)
         {
-            byte[] memory = console.GetMemory(Address, 4);
-            ReverseBytes(memory, 4);
+            byte[] memory = console.GetMemory(Address, 4U);
+            JRPC.ReverseBytes(memory, 4);
             return BitConverter.ToInt32(memory, 0);
         }
 
         public static int[] ReadInt32(this IXboxConsole console, uint Address, uint ArraySize)
         {
-            {
-                int[] num = new int[ArraySize];
-                byte[] memory = console.GetMemory(Address, ArraySize * 4);
-                ReverseBytes(memory, 4);
-                for (int i = 0; i < ArraySize; i++)
-                {
-                    num[i] = BitConverter.ToInt32(memory, i * 4);
-                }
-                return num;
-            }
+            int[] numArray = new int[ArraySize];
+            byte[] memory = console.GetMemory(Address, ArraySize * 4U);
+            JRPC.ReverseBytes(memory, 4);
+            for (int index = 0; (long)index < (long)ArraySize; ++index)
+                numArray[index] = BitConverter.ToInt32(memory, index * 4);
+            return numArray;
         }
 
         public static long ReadInt64(this IXboxConsole console, uint Address)
         {
-            byte[] memory = console.GetMemory(Address, 8);
-            ReverseBytes(memory, 8);
+            byte[] memory = console.GetMemory(Address, 8U);
+            JRPC.ReverseBytes(memory, 8);
             return BitConverter.ToInt64(memory, 0);
         }
 
         public static long[] ReadInt64(this IXboxConsole console, uint Address, uint ArraySize)
         {
-
-            {
-                long[] num = new long[ArraySize];
-                byte[] memory = console.GetMemory(Address, ArraySize * 8);
-                ReverseBytes(memory, 8);
-                for (int i = 0; i < ArraySize; i++)
-                {
-                    num[i] = (long)BitConverter.ToUInt32(memory, i * 8);
-                }
-                return num;
-            }
+            long[] numArray = new long[ArraySize];
+            byte[] memory = console.GetMemory(Address, ArraySize * 8U);
+            JRPC.ReverseBytes(memory, 8);
+            for (int index = 0; (long)index < (long)ArraySize; ++index)
+                numArray[index] = (long)BitConverter.ToUInt32(memory, index * 8);
+            return numArray;
         }
 
-        public static sbyte ReadSByte(this IXboxConsole console, uint Address)
-        {
-            return (sbyte)console.GetMemory(Address, 1)[0];
-        }
+        public static sbyte ReadSByte(this IXboxConsole console, uint Address) => (sbyte)console.GetMemory(Address, 1U)[0];
 
-        public static string ReadString(this IXboxConsole console, uint Address, uint size)
-        {
-            return Encoding.UTF8.GetString(console.GetMemory(Address, size));
-        }
+        public static string ReadString(this IXboxConsole console, uint Address, uint size) => Encoding.UTF8.GetString(console.GetMemory(Address, size));
 
         public static ushort ReadUInt16(this IXboxConsole console, uint Address)
         {
-            byte[] memory = console.GetMemory(Address, 2);
-            ReverseBytes(memory, 2);
+            byte[] memory = console.GetMemory(Address, 2U);
+            JRPC.ReverseBytes(memory, 2);
             return BitConverter.ToUInt16(memory, 0);
         }
 
         public static ushort[] ReadUInt16(this IXboxConsole console, uint Address, uint ArraySize)
         {
-
-            {
-                ushort[] num = new ushort[ArraySize];
-                byte[] memory = console.GetMemory(Address, ArraySize * 2);
-                ReverseBytes(memory, 2);
-                for (int i = 0; i < ArraySize; i++)
-                {
-                    num[i] = BitConverter.ToUInt16(memory, i * 2);
-                }
-                return num;
-            }
+            ushort[] numArray = new ushort[ArraySize];
+            byte[] memory = console.GetMemory(Address, ArraySize * 2U);
+            JRPC.ReverseBytes(memory, 2);
+            for (int index = 0; (long)index < (long)ArraySize; ++index)
+                numArray[index] = BitConverter.ToUInt16(memory, index * 2);
+            return numArray;
         }
 
         public static uint ReadUInt32(this IXboxConsole console, uint Address)
         {
-            byte[] memory = console.GetMemory(Address, 4);
-            ReverseBytes(memory, 4);
+            byte[] memory = console.GetMemory(Address, 4U);
+            JRPC.ReverseBytes(memory, 4);
             return BitConverter.ToUInt32(memory, 0);
         }
 
         public static uint[] ReadUInt32(this IXboxConsole console, uint Address, uint ArraySize)
         {
-
-            {
-                uint[] num = new uint[ArraySize];
-                byte[] memory = console.GetMemory(Address, ArraySize * 4);
-                ReverseBytes(memory, 4);
-                for (int i = 0; i < ArraySize; i++)
-                {
-                    num[i] = BitConverter.ToUInt32(memory, i * 4);
-                }
-                return num;
-            }
+            uint[] numArray = new uint[ArraySize];
+            byte[] memory = console.GetMemory(Address, ArraySize * 4U);
+            JRPC.ReverseBytes(memory, 4);
+            for (int index = 0; (long)index < (long)ArraySize; ++index)
+                numArray[index] = BitConverter.ToUInt32(memory, index * 4);
+            return numArray;
         }
 
         public static ulong ReadUInt64(this IXboxConsole console, uint Address)
         {
-            byte[] memory = console.GetMemory(Address, 8);
-            ReverseBytes(memory, 8);
+            byte[] memory = console.GetMemory(Address, 8U);
+            JRPC.ReverseBytes(memory, 8);
             return BitConverter.ToUInt64(memory, 0);
         }
 
         public static ulong[] ReadUInt64(this IXboxConsole console, uint Address, uint ArraySize)
         {
-
-            {
-                ulong[] num = new ulong[ArraySize];
-                byte[] memory = console.GetMemory(Address, ArraySize * 8);
-                ReverseBytes(memory, 8);
-                for (int i = 0; i < ArraySize; i++)
-                {
-                    num[i] = BitConverter.ToUInt32(memory, i * 8);
-                }
-                return num;
-            }
+            ulong[] numArray = new ulong[ArraySize];
+            byte[] memory = console.GetMemory(Address, ArraySize * 8U);
+            JRPC.ReverseBytes(memory, 8);
+            for (int index = 0; (long)index < (long)ArraySize; ++index)
+                numArray[index] = (ulong)BitConverter.ToUInt32(memory, index * 8);
+            return numArray;
         }
 
         public static uint ResolveFunction(this IXboxConsole console, string ModuleName, uint Ordinal)
         {
-            object[] jRPCVersion = new object[] { "consolefeatures ver=", JRPCVersion, " type=9 params=\"A\\0\\A\\2\\", String, "/", ModuleName.Length, "\\", ModuleName.ToHexString(), "\\", Int, "\\", Ordinal, "\\\"" };
-            string str = SendCommand(console, string.Concat(jRPCVersion));
-            return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
+            string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=9 params=\"A\\0\\A\\2\\" + (object)JRPC.String + "/" + (object)ModuleName.Length + "\\" + ModuleName.ToHexString() + "\\" + (object)JRPC.Int + "\\" + (object)Ordinal + "\\\"";
+            string String = JRPC.SendCommand(console, Command);
+            return uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
         }
 
-        public static void SetLeds(this IXboxConsole console, LEDState Top_Left, LEDState Top_Right, LEDState Bottom_Left, LEDState Bottom_Right)
+        public static void SetLeds(
+          this IXboxConsole console,
+          JRPC.LEDState Top_Left,
+          JRPC.LEDState Top_Right,
+          JRPC.LEDState Bottom_Left,
+          JRPC.LEDState Bottom_Right)
         {
-            object[] jRPCVersion = new object[] { "consolefeatures ver=", JRPCVersion, " type=14 params=\"A\\0\\A\\4\\", Int, "\\", (uint)Top_Left, "\\", Int, "\\", (uint)Top_Right, "\\", Int, "\\", (uint)Bottom_Left, "\\", Int, "\\", (uint)Bottom_Right, "\\\"" };
-            SendCommand(console, string.Concat(jRPCVersion));
+            string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=14 params=\"A\\0\\A\\4\\" + (object)JRPC.Int + "\\" + (object)(uint)Top_Left + "\\" + (object)JRPC.Int + "\\" + (object)(uint)Top_Right + "\\" + (object)JRPC.Int + "\\" + (object)(uint)Bottom_Left + "\\" + (object)JRPC.Int + "\\" + (object)(uint)Bottom_Right + "\\\"";
+            JRPC.SendCommand(console, Command);
         }
 
-        public static void SetMemory(this IXboxConsole console, uint Address, byte[] Data)
-        {
-            uint num = 0;
-            console.DebugTarget.SetMemory(Address, (uint)Data.Length, Data, out num);
-        }
+        public static void SetMemory(this IXboxConsole console, uint Address, byte[] Data) => console.DebugTarget.SetMemory(Address, (uint)Data.Length, Data, out uint _);
 
         public static void ShutDownConsole(this IXboxConsole console)
         {
             try
             {
-                string str = string.Concat("consolefeatures ver=", JRPCVersion, " type=11 params=\"A\\0\\A\\0\\\"");
-                SendCommand(console, str);
+                string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=11 params=\"A\\0\\A\\0\\\"";
+                JRPC.SendCommand(console, Command);
             }
             catch
             {
@@ -1139,275 +1040,230 @@ namespace JRPC_Client
 
         public static byte[] ToByteArray(this string String)
         {
-            byte[] str = new byte[String.Length + 1];
-            for (int i = 0; i < String.Length; i++)
-            {
-                str[i] = (byte)String[i];
-            }
-            return str;
+            byte[] numArray = new byte[String.Length + 1];
+            for (int index = 0; index < String.Length; ++index)
+                numArray[index] = (byte)String[index];
+            return numArray;
         }
 
         public static string ToHexString(this string String)
         {
             string str = string.Empty;
-            string str1 = String;
-            for (int i = 0; i < str1.Length; i++)
-            {
-                byte num = (byte)str1[i];
-                str = string.Concat(str, num.ToString("X2"));
-            }
+            foreach (byte num in String)
+                str += num.ToString("X2");
             return str;
         }
 
-        public static byte[] ToWCHAR(this string String)
-        {
-            return WCHAR(String);
-        }
+        public static byte[] ToWCHAR(this string String) => JRPC.WCHAR(String);
 
         public static byte[] WCHAR(string String)
         {
             byte[] numArray = new byte[String.Length * 2 + 2];
-            int num = 1;
-            string str = String;
-            for (int i = 0; i < str.Length; i++)
+            int index = 1;
+            foreach (byte num in String)
             {
-                numArray[num] = (byte)str[i];
-                num += 2;
+                numArray[index] = num;
+                index += 2;
             }
             return numArray;
         }
 
-        public static void WriteBool(this IXboxConsole console, uint Address, bool Value)
+        public static void WriteBool(this IXboxConsole console, uint Address, bool Value) => console.SetMemory(Address, new byte[1]
         {
-            object obj;
-            IXboxConsole xboxConsole = console;
-            uint address = Address;
-            byte[] numArray = new byte[1];
-            byte[] numArray1 = numArray;
-            if (Value)
-            {
-                obj = 1;
-            }
-            else
-            {
-                obj = null;
-            }
-            numArray1[0] = (byte)obj;
-            xboxConsole.SetMemory(address, numArray);
-        }
+      Value ? (byte) 1 : (byte) 0
+        });
 
         public static void WriteBool(this IXboxConsole console, uint Address, bool[] Value)
         {
-            object obj;
-            byte[] numArray = new byte[0];
-            for (int i = 0; i < Value.Length; i++)
-            {
-                byte[] numArray1 = numArray;
-                if (Value[i])
-                {
-                    obj = 1;
-                }
-                else
-                {
-                    obj = null;
-                }
-                numArray1.Push(out numArray, (byte)obj);
-            }
-            console.SetMemory(Address, numArray);
+            byte[] OutArray = new byte[0];
+            for (int index = 0; index < Value.Length; ++index)
+                OutArray.Push(out OutArray, Value[index] ? (byte)1 : (byte)0);
+            console.SetMemory(Address, OutArray);
         }
 
-        public static void WriteByte(this IXboxConsole console, uint Address, byte Value)
+        public static void WriteByte(this IXboxConsole console, uint Address, byte Value) => console.SetMemory(Address, new byte[1]
         {
-            console.SetMemory(Address, new byte[] { Value });
-        }
+      Value
+        });
 
-        public static void WriteByte(this IXboxConsole console, uint Address, byte[] Value)
-        {
-            console.SetMemory(Address, Value);
-        }
+        public static void WriteByte(this IXboxConsole console, uint Address, byte[] Value) => console.SetMemory(Address, Value);
 
         public static void WriteFloat(this IXboxConsole console, uint Address, float Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
-            Array.Reverse(bytes);
+            Array.Reverse((Array)bytes);
             console.SetMemory(Address, bytes);
         }
 
         public static void WriteFloat(this IXboxConsole console, uint Address, float[] Value)
         {
             byte[] numArray = new byte[Value.Length * 4];
-            for (int i = 0; i < Value.Length; i++)
-            {
-                BitConverter.GetBytes(Value[i]).CopyTo(numArray, i * 4);
-            }
-            ReverseBytes(numArray, 4);
+            for (int index = 0; index < Value.Length; ++index)
+                BitConverter.GetBytes(Value[index]).CopyTo((Array)numArray, index * 4);
+            JRPC.ReverseBytes(numArray, 4);
             console.SetMemory(Address, numArray);
         }
 
         public static void WriteInt16(this IXboxConsole console, uint Address, short Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
-            ReverseBytes(bytes, 2);
+            JRPC.ReverseBytes(bytes, 2);
             console.SetMemory(Address, bytes);
         }
 
         public static void WriteInt16(this IXboxConsole console, uint Address, short[] Value)
         {
             byte[] numArray = new byte[Value.Length * 2];
-            for (int i = 0; i < Value.Length; i++)
-            {
-                BitConverter.GetBytes(Value[i]).CopyTo(numArray, i * 2);
-            }
-            ReverseBytes(numArray, 2);
+            for (int index = 0; index < Value.Length; ++index)
+                BitConverter.GetBytes(Value[index]).CopyTo((Array)numArray, index * 2);
+            JRPC.ReverseBytes(numArray, 2);
             console.SetMemory(Address, numArray);
         }
 
         public static void WriteInt32(this IXboxConsole console, uint Address, int Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
-            ReverseBytes(bytes, 4);
+            JRPC.ReverseBytes(bytes, 4);
             console.SetMemory(Address, bytes);
         }
 
         public static void WriteInt32(this IXboxConsole console, uint Address, int[] Value)
         {
             byte[] numArray = new byte[Value.Length * 4];
-            for (int i = 0; i < Value.Length; i++)
-            {
-                BitConverter.GetBytes(Value[i]).CopyTo(numArray, i * 4);
-            }
-            ReverseBytes(numArray, 4);
+            for (int index = 0; index < Value.Length; ++index)
+                BitConverter.GetBytes(Value[index]).CopyTo((Array)numArray, index * 4);
+            JRPC.ReverseBytes(numArray, 4);
             console.SetMemory(Address, numArray);
         }
 
         public static void WriteInt64(this IXboxConsole console, uint Address, long Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
-            ReverseBytes(bytes, 8);
+            JRPC.ReverseBytes(bytes, 8);
             console.SetMemory(Address, bytes);
         }
 
         public static void WriteInt64(this IXboxConsole console, uint Address, long[] Value)
         {
             byte[] numArray = new byte[Value.Length * 8];
-            for (int i = 0; i < Value.Length; i++)
-            {
-                BitConverter.GetBytes(Value[i]).CopyTo(numArray, i * 8);
-            }
-            ReverseBytes(numArray, 8);
+            for (int index = 0; index < Value.Length; ++index)
+                BitConverter.GetBytes(Value[index]).CopyTo((Array)numArray, index * 8);
+            JRPC.ReverseBytes(numArray, 8);
             console.SetMemory(Address, numArray);
         }
 
-        public static void WriteSByte(this IXboxConsole console, uint Address, sbyte Value)
+        public static void WriteSByte(this IXboxConsole console, uint Address, sbyte Value) => console.SetMemory(Address, new byte[1]
         {
-            byte[] bytes = new byte[] { BitConverter.GetBytes(Value)[0] };
-            console.SetMemory(Address, bytes);
-        }
+      BitConverter.GetBytes((short) Value)[0]
+        });
 
         public static void WriteSByte(this IXboxConsole console, uint Address, sbyte[] Value)
         {
-            byte[] numArray = new byte[0];
-            sbyte[] value = Value;
-            for (int i = 0; i < value.Length; i++)
-            {
-                numArray.Push(out numArray, (byte)value[i]);
-            }
-            console.SetMemory(Address, numArray);
+            byte[] OutArray = new byte[0];
+            foreach (byte num in Value)
+                OutArray.Push(out OutArray, num);
+            console.SetMemory(Address, OutArray);
         }
 
         public static void WriteString(this IXboxConsole console, uint Address, string String)
         {
-            byte[] numArray = new byte[0];
-            string str = String;
-            for (int i = 0; i < str.Length; i++)
-            {
-                byte num = (byte)str[i];
-                numArray.Push(out numArray, num);
-            }
-            numArray.Push(out numArray, 0);
-            console.SetMemory(Address, numArray);
+            byte[] OutArray = new byte[0];
+            foreach (byte num in String)
+                OutArray.Push(out OutArray, num);
+            OutArray.Push(out OutArray, (byte)0);
+            console.SetMemory(Address, OutArray);
         }
 
         public static void WriteUInt16(this IXboxConsole console, uint Address, ushort Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
-            ReverseBytes(bytes, 2);
+            JRPC.ReverseBytes(bytes, 2);
             console.SetMemory(Address, bytes);
         }
 
         public static void WriteUInt16(this IXboxConsole console, uint Address, ushort[] Value)
         {
             byte[] numArray = new byte[Value.Length * 2];
-            for (int i = 0; i < Value.Length; i++)
-            {
-                BitConverter.GetBytes(Value[i]).CopyTo(numArray, i * 2);
-            }
-            ReverseBytes(numArray, 2);
+            for (int index = 0; index < Value.Length; ++index)
+                BitConverter.GetBytes(Value[index]).CopyTo((Array)numArray, index * 2);
+            JRPC.ReverseBytes(numArray, 2);
             console.SetMemory(Address, numArray);
         }
 
         public static void WriteUInt32(this IXboxConsole console, uint Address, uint Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
-            ReverseBytes(bytes, 4);
+            JRPC.ReverseBytes(bytes, 4);
             console.SetMemory(Address, bytes);
         }
 
         public static void WriteUInt32(this IXboxConsole console, uint Address, uint[] Value)
         {
             byte[] numArray = new byte[Value.Length * 4];
-            for (int i = 0; i < Value.Length; i++)
-            {
-                BitConverter.GetBytes(Value[i]).CopyTo(numArray, i * 4);
-            }
-            ReverseBytes(numArray, 4);
+            for (int index = 0; index < Value.Length; ++index)
+                BitConverter.GetBytes(Value[index]).CopyTo((Array)numArray, index * 4);
+            JRPC.ReverseBytes(numArray, 4);
             console.SetMemory(Address, numArray);
         }
 
         public static void WriteUInt64(this IXboxConsole console, uint Address, ulong Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
-            ReverseBytes(bytes, 8);
+            JRPC.ReverseBytes(bytes, 8);
             console.SetMemory(Address, bytes);
         }
 
         public static void WriteUInt64(this IXboxConsole console, uint Address, ulong[] Value)
         {
             byte[] numArray = new byte[Value.Length * 8];
-            for (int i = 0; i < Value.Length; i++)
-            {
-                BitConverter.GetBytes(Value[i]).CopyTo(numArray, i * 8);
-            }
-            ReverseBytes(numArray, 8);
+            for (int index = 0; index < Value.Length; ++index)
+                BitConverter.GetBytes(Value[index]).CopyTo((Array)numArray, index * 8);
+            JRPC.ReverseBytes(numArray, 8);
             console.SetMemory(Address, numArray);
         }
 
         public static uint XamGetCurrentTitleId(this IXboxConsole console)
         {
-            string str = string.Concat("consolefeatures ver=", JRPCVersion, " type=16 params=\"A\\0\\A\\0\\\"");
-            string str1 = SendCommand(console, str);
-            return uint.Parse(str1.Substring(str1.find(" ") + 1), NumberStyles.HexNumber);
+            string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=16 params=\"A\\0\\A\\0\\\"";
+            string String = JRPC.SendCommand(console, Command);
+            return uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
         }
 
         public static string XboxIP(this IXboxConsole console)
         {
             byte[] bytes = BitConverter.GetBytes(console.IPAddress);
-            Array.Reverse(bytes);
-            return (new IPAddress(bytes)).ToString();
+            Array.Reverse((Array)bytes);
+            return new IPAddress(bytes).ToString();
         }
 
-        public static void XNotify(this Xbox console, string Text)
-        {
-            console = new Xbox();
-            console.XNotify(Text, 34);
-        }
+        public static void XNotify(this IXboxConsole console, string Text) => console.XNotify(Text, 34U);
 
         public static void XNotify(this IXboxConsole console, string Text, uint Type)
         {
-            object[] jRPCVersion = new object[] { "consolefeatures ver=", JRPCVersion, " type=12 params=\"A\\0\\A\\2\\", String, "/", Text.Length, "\\", Text.ToHexString(), "\\", Int, "\\", Type, "\\\"" };
-            SendCommand(console, string.Concat(jRPCVersion));
+            string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=12 params=\"A\\0\\A\\2\\" + (object)JRPC.String + "/" + (object)Text.Length + "\\" + Text.ToHexString() + "\\" + (object)JRPC.Int + "\\" + (object)Type + "\\\"";
+            JRPC.SendCommand(console, Command);
         }
 
+        public enum LEDState
+        {
+            OFF = 0,
+            RED = 8,
+            GREEN = 128, // 0x00000080
+            ORANGE = 136, // 0x00000088
+        }
 
+        public enum TemperatureType
+        {
+            CPU,
+            GPU,
+            EDRAM,
+            MotherBoard,
+        }
+
+        public enum ThreadType
+        {
+            System,
+            Title,
+        }
     }
 }
