@@ -4,7 +4,7 @@ Give A ⭐ To Support This Project.
 [![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XboxVillain/JRPC/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/QvdmNnfQ86)
 
 
-An open source library designed to Emulate or Imitate The XDevkit library extention to work exactly like the original with New added features
+An open source library Made By James Am Just Realeasing It As An Archive For People To Use Etc
 
 I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
 Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/QvdmNnfQ86)!
