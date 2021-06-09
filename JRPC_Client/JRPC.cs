@@ -1,3 +1,5 @@
+// Source Code Released By TeddyHammer 
+// Archive Purposes And Allow People To Learn How The Xbox 360 Works 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,6 +11,9 @@ using XDevkit;
 
 namespace JRPC_Client
 {
+    /// <summary>
+    /// Created By Xx jAmes t xX
+    /// </summary>
     public static class JRPC
     {
         private static readonly uint Byte = 4;
@@ -94,6 +99,14 @@ namespace JRPC_Client
         private static readonly uint Void = 0;
         public static readonly uint JRPCVersion = 2;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Size"></param>
+        /// <returns></returns>
         private static T[] ArrayReturn<T>(this IXboxConsole console, uint Address, uint Size)
         {
             if (Size == 0U)
@@ -118,6 +131,19 @@ namespace JRPC_Client
                 obj = (object)console.GetMemory(Address, Size);
             return (T[])obj;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="SystemThread"></param>
+        /// <param name="Type"></param>
+        /// <param name="t"></param>
+        /// <param name="module"></param>
+        /// <param name="ordinal"></param>
+        /// <param name="Address"></param>
+        /// <param name="ArraySize"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         private static object CallArgs(IXboxConsole console, bool SystemThread, uint Type, Type t, string module, int ordinal, uint Address, uint ArraySize, params object[] Arguments)
         {
             string str2;
@@ -496,7 +522,11 @@ namespace JRPC_Client
         TR_0026:
             return ((Type != Void) ? ((object)ulong.Parse(str2.Substring(str2.find(" ") + 1), NumberStyles.HexNumber)) : ((object)0));
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iArray"></param>
+        /// <returns></returns>
         private static byte[] IntArrayToByte(int[] iArray)
         {
             byte[] numArray = new byte[iArray.Length * 4];
@@ -511,7 +541,11 @@ namespace JRPC_Client
             }
             return numArray;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="groupSize"></param>
         private static void ReverseBytes(byte[] buffer, int groupSize)
         {
             if (buffer.Length % groupSize != 0)
@@ -528,7 +562,12 @@ namespace JRPC_Client
                 }
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Command"></param>
+        /// <returns></returns>
         private static string SendCommand(IXboxConsole console, string Command)
         {
             int connectionId = (int)JRPC.connectionId;
@@ -549,7 +588,12 @@ namespace JRPC_Client
             }
             return Response;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Array"></param>
+        /// <returns></returns>
         private static uint TypeToType<T>(bool Array) where T : struct
         {
             Type type = typeof(T);
@@ -559,9 +603,17 @@ namespace JRPC_Client
                 return JRPC.String;
             return type == typeof(float) || type == typeof(double) ? (Array ? JRPC.FloatArray : JRPC.Float) : (type == typeof(byte) || type == typeof(char) ? (Array ? JRPC.ByteArray : JRPC.Byte) : ((type == typeof(ulong) || type == typeof(long)) && Array ? JRPC.Uint64Array : JRPC.Uint64));
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Value"></param>
+        /// <returns></returns>
         private static int UIntToInt(uint Value) => BitConverter.ToInt32(BitConverter.GetBytes(Value), 0);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         internal static ulong ConvertToUInt64(object o)
         {
             switch (o)
@@ -590,13 +642,36 @@ namespace JRPC_Client
                     return 0;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         internal static bool IsValidReturnType(Type t) => JRPC.ValidReturnTypes.Contains(t);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         internal static bool IsValidStructType(Type t) => !t.IsPrimitive && t.IsValueType;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static T Call<T>(this IXboxConsole console, uint Address, params object[] Arguments) where T : struct => (T)JRPC.CallArgs(console, true, JRPC.TypeToType<T>(false), typeof(T), (string)null, 0, Address, 0U, Arguments);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="console"></param>
+        /// <param name="module"></param>
+        /// <param name="ordinal"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static T Call<T>(
           this IXboxConsole console,
           string module,
@@ -606,7 +681,15 @@ namespace JRPC_Client
         {
             return (T)JRPC.CallArgs(console, true, JRPC.TypeToType<T>(false), typeof(T), module, ordinal, 0U, 0U, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="console"></param>
+        /// <param name="Type"></param>
+        /// <param name="Address"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static T Call<T>(
           this IXboxConsole console,
           JRPC.ThreadType Type,
@@ -616,7 +699,16 @@ namespace JRPC_Client
         {
             return (T)JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.TypeToType<T>(false), typeof(T), (string)null, 0, Address, 0U, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="console"></param>
+        /// <param name="Type"></param>
+        /// <param name="module"></param>
+        /// <param name="ordinal"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static T Call<T>(
           this IXboxConsole console,
           JRPC.ThreadType Type,
@@ -627,7 +719,15 @@ namespace JRPC_Client
         {
             return (T)JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.TypeToType<T>(false), typeof(T), module, ordinal, 0U, 0U, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="ArraySize"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static T[] CallArray<T>(
           this IXboxConsole console,
           uint Address,
@@ -637,7 +737,16 @@ namespace JRPC_Client
         {
             return ArraySize == 0U ? new T[1] : (T[])JRPC.CallArgs(console, true, JRPC.TypeToType<T>(true), typeof(T), (string)null, 0, Address, ArraySize, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="console"></param>
+        /// <param name="module"></param>
+        /// <param name="ordinal"></param>
+        /// <param name="ArraySize"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static T[] CallArray<T>(
           this IXboxConsole console,
           string module,
@@ -648,7 +757,16 @@ namespace JRPC_Client
         {
             return ArraySize == 0U ? new T[1] : (T[])JRPC.CallArgs(console, true, JRPC.TypeToType<T>(true), typeof(T), module, ordinal, 0U, ArraySize, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="console"></param>
+        /// <param name="Type"></param>
+        /// <param name="Address"></param>
+        /// <param name="ArraySize"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static T[] CallArray<T>(
           this IXboxConsole console,
           JRPC.ThreadType Type,
@@ -659,7 +777,17 @@ namespace JRPC_Client
         {
             return ArraySize == 0U ? new T[1] : (T[])JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.TypeToType<T>(true), typeof(T), (string)null, 0, Address, ArraySize, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="console"></param>
+        /// <param name="Type"></param>
+        /// <param name="module"></param>
+        /// <param name="ordinal"></param>
+        /// <param name="ArraySize"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static T[] CallArray<T>(
           this IXboxConsole console,
           JRPC.ThreadType Type,
@@ -671,7 +799,13 @@ namespace JRPC_Client
         {
             return ArraySize == 0U ? new T[1] : (T[])JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.TypeToType<T>(true), typeof(T), module, ordinal, 0U, ArraySize, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static string CallString(
           this IXboxConsole console,
           uint Address,
@@ -679,7 +813,14 @@ namespace JRPC_Client
         {
             return (string)JRPC.CallArgs(console, true, JRPC.String, typeof(string), (string)null, 0, Address, 0U, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="module"></param>
+        /// <param name="ordinal"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static string CallString(
           this IXboxConsole console,
           string module,
@@ -688,7 +829,14 @@ namespace JRPC_Client
         {
             return (string)JRPC.CallArgs(console, true, JRPC.String, typeof(string), module, ordinal, 0U, 0U, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Type"></param>
+        /// <param name="Address"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static string CallString(
           this IXboxConsole console,
           JRPC.ThreadType Type,
@@ -697,7 +845,15 @@ namespace JRPC_Client
         {
             return (string)JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.String, typeof(string), (string)null, 0, Address, 0U, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Type"></param>
+        /// <param name="module"></param>
+        /// <param name="ordinal"></param>
+        /// <param name="Arguments"></param>
+        /// <returns></returns>
         public static string CallString(
           this IXboxConsole console,
           JRPC.ThreadType Type,
@@ -707,9 +863,20 @@ namespace JRPC_Client
         {
             return (string)JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.String, typeof(string), module, ordinal, 0U, 0U, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Arguments"></param>
         public static void CallVoid(this IXboxConsole console, uint Address, params object[] Arguments) => JRPC.CallArgs(console, true, JRPC.Void, typeof(void), (string)null, 0, Address, 0U, Arguments);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="module"></param>
+        /// <param name="ordinal"></param>
+        /// <param name="Arguments"></param>
         public static void CallVoid(
           this IXboxConsole console,
           string module,
@@ -718,7 +885,13 @@ namespace JRPC_Client
         {
             JRPC.CallArgs(console, true, JRPC.Void, typeof(void), module, ordinal, 0U, 0U, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Type"></param>
+        /// <param name="Address"></param>
+        /// <param name="Arguments"></param>
         public static void CallVoid(
           this IXboxConsole console,
           JRPC.ThreadType Type,
@@ -727,7 +900,14 @@ namespace JRPC_Client
         {
             JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.Void, typeof(void), (string)null, 0, Address, 0U, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Type"></param>
+        /// <param name="module"></param>
+        /// <param name="ordinal"></param>
+        /// <param name="Arguments"></param>
         public static void CallVoid(
           this IXboxConsole console,
           JRPC.ThreadType Type,
@@ -737,7 +917,13 @@ namespace JRPC_Client
         {
             JRPC.CallArgs(console, Type == JRPC.ThreadType.System, JRPC.Void, typeof(void), module, ordinal, 0U, 0U, Arguments);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Console"></param>
+        /// <param name="XboxNameOrIP"></param>
+        /// <returns></returns>
         public static bool Connect(
           this IXboxConsole console,
           out IXboxConsole Console,
@@ -777,16 +963,31 @@ namespace JRPC_Client
             Console = xboxConsole;
             return true;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <returns></returns>
         public static string ConsoleType(this IXboxConsole console)
         {
             string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=17 params=\"A\\0\\A\\0\\\"";
             string String = JRPC.SendCommand(console, Command);
             return String.Substring(String.find(" ") + 1);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void constantMemorySet(this IXboxConsole console, uint Address, uint Value) => JRPC.constantMemorySetting(console, Address, Value, false, 0U, false, 0U);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
+        /// <param name="TitleID"></param>
         public static void constantMemorySet(
           this IXboxConsole console,
           uint Address,
@@ -795,7 +996,14 @@ namespace JRPC_Client
         {
             JRPC.constantMemorySetting(console, Address, Value, false, 0U, true, TitleID);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
+        /// <param name="IfValue"></param>
+        /// <param name="TitleID"></param>
         public static void constantMemorySet(
           this IXboxConsole console,
           uint Address,
@@ -805,7 +1013,16 @@ namespace JRPC_Client
         {
             JRPC.constantMemorySetting(console, Address, Value, true, IfValue, true, TitleID);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
+        /// <param name="useIfValue"></param>
+        /// <param name="IfValue"></param>
+        /// <param name="usetitleID"></param>
+        /// <param name="TitleID"></param>
         public static void constantMemorySetting(
           IXboxConsole console,
           uint Address,
@@ -850,14 +1067,24 @@ namespace JRPC_Client
             string String = JRPC.SendCommand(console, Command);
             return String.Substring(String.find(" ") + 1);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <returns></returns>
         public static uint GetKernalVersion(this IXboxConsole console)
         {
             string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=13 params=\"A\\0\\A\\0\\\"";
             string String = JRPC.SendCommand(console, Command);
             return uint.Parse(String.Substring(String.find(" ") + 1));
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Length"></param>
+        /// <returns></returns>
         public static byte[] GetMemory(this IXboxConsole console, uint Address, uint Length)
         {
             uint BytesRead = 0;
@@ -866,7 +1093,12 @@ namespace JRPC_Client
             console.DebugTarget.InvalidateMemoryCache(true, Address, Length);
             return Data;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="TemperatureType"></param>
+        /// <returns></returns>
         public static uint GetTemperature(
           this IXboxConsole console,
           JRPC.TemperatureType TemperatureType)
@@ -882,18 +1114,39 @@ namespace JRPC_Client
             InArray.CopyTo((Array)OutArray, 0);
             OutArray[InArray.Length] = Value;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
         public static bool ReadBool(this IXboxConsole console, uint Address) => console.GetMemory(Address, 1U)[0] != (byte)0;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
         public static byte ReadByte(this IXboxConsole console, uint Address) => console.GetMemory(Address, 1U)[0];
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
         public static float ReadFloat(this IXboxConsole console, uint Address)
         {
             byte[] memory = console.GetMemory(Address, 4U);
             JRPC.ReverseBytes(memory, 4);
             return BitConverter.ToSingle(memory, 0);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="ArraySize"></param>
+        /// <returns></returns>
         public static float[] ReadFloat(this IXboxConsole console, uint Address, uint ArraySize)
         {
             float[] numArray = new float[ArraySize];
@@ -903,14 +1156,25 @@ namespace JRPC_Client
                 numArray[index] = BitConverter.ToSingle(memory, index * 4);
             return numArray;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
         public static short ReadInt16(this IXboxConsole console, uint Address)
         {
             byte[] memory = console.GetMemory(Address, 2U);
             JRPC.ReverseBytes(memory, 2);
             return BitConverter.ToInt16(memory, 0);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="ArraySize"></param>
+        /// <returns></returns>
         public static short[] ReadInt16(this IXboxConsole console, uint Address, uint ArraySize)
         {
             short[] numArray = new short[ArraySize];
@@ -920,14 +1184,25 @@ namespace JRPC_Client
                 numArray[index] = BitConverter.ToInt16(memory, index * 2);
             return numArray;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
         public static int ReadInt32(this IXboxConsole console, uint Address)
         {
             byte[] memory = console.GetMemory(Address, 4U);
             JRPC.ReverseBytes(memory, 4);
             return BitConverter.ToInt32(memory, 0);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="ArraySize"></param>
+        /// <returns></returns>
         public static int[] ReadInt32(this IXboxConsole console, uint Address, uint ArraySize)
         {
             int[] numArray = new int[ArraySize];
@@ -937,14 +1212,25 @@ namespace JRPC_Client
                 numArray[index] = BitConverter.ToInt32(memory, index * 4);
             return numArray;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
         public static long ReadInt64(this IXboxConsole console, uint Address)
         {
             byte[] memory = console.GetMemory(Address, 8U);
             JRPC.ReverseBytes(memory, 8);
             return BitConverter.ToInt64(memory, 0);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="ArraySize"></param>
+        /// <returns></returns>
         public static long[] ReadInt64(this IXboxConsole console, uint Address, uint ArraySize)
         {
             long[] numArray = new long[ArraySize];
@@ -954,18 +1240,40 @@ namespace JRPC_Client
                 numArray[index] = (long)BitConverter.ToUInt32(memory, index * 8);
             return numArray;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
         public static sbyte ReadSByte(this IXboxConsole console, uint Address) => (sbyte)console.GetMemory(Address, 1U)[0];
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
         public static string ReadString(this IXboxConsole console, uint Address, uint size) => Encoding.UTF8.GetString(console.GetMemory(Address, size));
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
         public static ushort ReadUInt16(this IXboxConsole console, uint Address)
         {
             byte[] memory = console.GetMemory(Address, 2U);
             JRPC.ReverseBytes(memory, 2);
             return BitConverter.ToUInt16(memory, 0);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="ArraySize"></param>
+        /// <returns></returns>
         public static ushort[] ReadUInt16(this IXboxConsole console, uint Address, uint ArraySize)
         {
             ushort[] numArray = new ushort[ArraySize];
@@ -975,14 +1283,25 @@ namespace JRPC_Client
                 numArray[index] = BitConverter.ToUInt16(memory, index * 2);
             return numArray;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
         public static uint ReadUInt32(this IXboxConsole console, uint Address)
         {
             byte[] memory = console.GetMemory(Address, 4U);
             JRPC.ReverseBytes(memory, 4);
             return BitConverter.ToUInt32(memory, 0);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="ArraySize"></param>
+        /// <returns></returns>
         public static uint[] ReadUInt32(this IXboxConsole console, uint Address, uint ArraySize)
         {
             uint[] numArray = new uint[ArraySize];
@@ -992,14 +1311,25 @@ namespace JRPC_Client
                 numArray[index] = BitConverter.ToUInt32(memory, index * 4);
             return numArray;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
         public static ulong ReadUInt64(this IXboxConsole console, uint Address)
         {
             byte[] memory = console.GetMemory(Address, 8U);
             JRPC.ReverseBytes(memory, 8);
             return BitConverter.ToUInt64(memory, 0);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="ArraySize"></param>
+        /// <returns></returns>
         public static ulong[] ReadUInt64(this IXboxConsole console, uint Address, uint ArraySize)
         {
             ulong[] numArray = new ulong[ArraySize];
@@ -1009,27 +1339,44 @@ namespace JRPC_Client
                 numArray[index] = (ulong)BitConverter.ToUInt32(memory, index * 8);
             return numArray;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="ModuleName"></param>
+        /// <param name="Ordinal"></param>
+        /// <returns></returns>
         public static uint ResolveFunction(this IXboxConsole console, string ModuleName, uint Ordinal)
         {
             string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=9 params=\"A\\0\\A\\2\\" + (object)JRPC.String + "/" + (object)ModuleName.Length + "\\" + ModuleName.ToHexString() + "\\" + (object)JRPC.Int + "\\" + (object)Ordinal + "\\\"";
             string String = JRPC.SendCommand(console, Command);
             return uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
         }
-
-        public static void SetLeds(
-          this IXboxConsole console,
-          JRPC.LEDState Top_Left,
-          JRPC.LEDState Top_Right,
-          JRPC.LEDState Bottom_Left,
-          JRPC.LEDState Bottom_Right)
+        /// <summary>
+        /// Allows User To Set The Xbox Ring Color
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Top_Left"></param>
+        /// <param name="Top_Right"></param>
+        /// <param name="Bottom_Left"></param>
+        /// <param name="Bottom_Right"></param>
+        public static void SetLeds(this IXboxConsole console, LEDState Top_Left, LEDState Top_Right, LEDState Bottom_Left, LEDState Bottom_Right)
         {
             string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=14 params=\"A\\0\\A\\4\\" + (object)JRPC.Int + "\\" + (object)(uint)Top_Left + "\\" + (object)JRPC.Int + "\\" + (object)(uint)Top_Right + "\\" + (object)JRPC.Int + "\\" + (object)(uint)Bottom_Left + "\\" + (object)JRPC.Int + "\\" + (object)(uint)Bottom_Right + "\\\"";
             JRPC.SendCommand(console, Command);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Data"></param>
         public static void SetMemory(this IXboxConsole console, uint Address, byte[] Data) => console.DebugTarget.SetMemory(Address, (uint)Data.Length, Data, out uint _);
-
+        /// <summary>
+        /// Tells The Console To Perform A Shutdown Event
+        /// </summary>
+        /// <param name="console"></param>
+        /// <returns>Console Starts To Shutdown</returns>
         public static void ShutDownConsole(this IXboxConsole console)
         {
             try
@@ -1041,7 +1388,11 @@ namespace JRPC_Client
             {
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="String"></param>
+        /// <returns></returns>
         public static byte[] ToByteArray(this string String)
         {
             byte[] numArray = new byte[String.Length + 1];
@@ -1049,7 +1400,11 @@ namespace JRPC_Client
                 numArray[index] = (byte)String[index];
             return numArray;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="String"></param>
+        /// <returns></returns>
         public static string ToHexString(this string String)
         {
             string str = string.Empty;
@@ -1057,9 +1412,17 @@ namespace JRPC_Client
                 str += num.ToString("X2");
             return str;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="String"></param>
+        /// <returns></returns>
         public static byte[] ToWCHAR(this string String) => JRPC.WCHAR(String);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="String"></param>
+        /// <returns></returns>
         public static byte[] WCHAR(string String)
         {
             byte[] numArray = new byte[String.Length * 2 + 2];
@@ -1071,12 +1434,22 @@ namespace JRPC_Client
             }
             return numArray;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteBool(this IXboxConsole console, uint Address, bool Value) => console.SetMemory(Address, new byte[1]
         {
       Value ? (byte) 1 : (byte) 0
         });
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteBool(this IXboxConsole console, uint Address, bool[] Value)
         {
             byte[] OutArray = new byte[0];
@@ -1084,21 +1457,41 @@ namespace JRPC_Client
                 OutArray.Push(out OutArray, Value[index] ? (byte)1 : (byte)0);
             console.SetMemory(Address, OutArray);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteByte(this IXboxConsole console, uint Address, byte Value) => console.SetMemory(Address, new byte[1]
         {
       Value
         });
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteByte(this IXboxConsole console, uint Address, byte[] Value) => console.SetMemory(Address, Value);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteFloat(this IXboxConsole console, uint Address, float Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
             Array.Reverse((Array)bytes);
             console.SetMemory(Address, bytes);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteFloat(this IXboxConsole console, uint Address, float[] Value)
         {
             byte[] numArray = new byte[Value.Length * 4];
@@ -1107,14 +1500,24 @@ namespace JRPC_Client
             JRPC.ReverseBytes(numArray, 4);
             console.SetMemory(Address, numArray);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteInt16(this IXboxConsole console, uint Address, short Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
             JRPC.ReverseBytes(bytes, 2);
             console.SetMemory(Address, bytes);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteInt16(this IXboxConsole console, uint Address, short[] Value)
         {
             byte[] numArray = new byte[Value.Length * 2];
@@ -1123,14 +1526,24 @@ namespace JRPC_Client
             JRPC.ReverseBytes(numArray, 2);
             console.SetMemory(Address, numArray);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteInt32(this IXboxConsole console, uint Address, int Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
             JRPC.ReverseBytes(bytes, 4);
             console.SetMemory(Address, bytes);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteInt32(this IXboxConsole console, uint Address, int[] Value)
         {
             byte[] numArray = new byte[Value.Length * 4];
@@ -1139,14 +1552,24 @@ namespace JRPC_Client
             JRPC.ReverseBytes(numArray, 4);
             console.SetMemory(Address, numArray);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteInt64(this IXboxConsole console, uint Address, long Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
             JRPC.ReverseBytes(bytes, 8);
             console.SetMemory(Address, bytes);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteInt64(this IXboxConsole console, uint Address, long[] Value)
         {
             byte[] numArray = new byte[Value.Length * 8];
@@ -1155,12 +1578,22 @@ namespace JRPC_Client
             JRPC.ReverseBytes(numArray, 8);
             console.SetMemory(Address, numArray);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteSByte(this IXboxConsole console, uint Address, sbyte Value) => console.SetMemory(Address, new byte[1]
         {
       BitConverter.GetBytes((short) Value)[0]
         });
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteSByte(this IXboxConsole console, uint Address, sbyte[] Value)
         {
             byte[] OutArray = new byte[0];
@@ -1168,7 +1601,12 @@ namespace JRPC_Client
                 OutArray.Push(out OutArray, num);
             console.SetMemory(Address, OutArray);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="String"></param>
         public static void WriteString(this IXboxConsole console, uint Address, string String)
         {
             byte[] OutArray = new byte[0];
@@ -1177,14 +1615,24 @@ namespace JRPC_Client
             OutArray.Push(out OutArray, (byte)0);
             console.SetMemory(Address, OutArray);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteUInt16(this IXboxConsole console, uint Address, ushort Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
             JRPC.ReverseBytes(bytes, 2);
             console.SetMemory(Address, bytes);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteUInt16(this IXboxConsole console, uint Address, ushort[] Value)
         {
             byte[] numArray = new byte[Value.Length * 2];
@@ -1193,14 +1641,24 @@ namespace JRPC_Client
             JRPC.ReverseBytes(numArray, 2);
             console.SetMemory(Address, numArray);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteUInt32(this IXboxConsole console, uint Address, uint Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
             JRPC.ReverseBytes(bytes, 4);
             console.SetMemory(Address, bytes);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteUInt32(this IXboxConsole console, uint Address, uint[] Value)
         {
             byte[] numArray = new byte[Value.Length * 4];
@@ -1209,14 +1667,24 @@ namespace JRPC_Client
             JRPC.ReverseBytes(numArray, 4);
             console.SetMemory(Address, numArray);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteUInt64(this IXboxConsole console, uint Address, ulong Value)
         {
             byte[] bytes = BitConverter.GetBytes(Value);
             JRPC.ReverseBytes(bytes, 8);
             console.SetMemory(Address, bytes);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Address"></param>
+        /// <param name="Value"></param>
         public static void WriteUInt64(this IXboxConsole console, uint Address, ulong[] Value)
         {
             byte[] numArray = new byte[Value.Length * 8];
@@ -1225,37 +1693,59 @@ namespace JRPC_Client
             JRPC.ReverseBytes(numArray, 8);
             console.SetMemory(Address, numArray);
         }
-
+        /// <summary>
+        /// Allows A User To Pull The Current Title ID.
+        /// </summary>
+        /// <param name="console"></param>
+        /// <returns>Tittle ID</returns>
         public static uint XamGetCurrentTitleId(this IXboxConsole console)
         {
             string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=16 params=\"A\\0\\A\\0\\\"";
             string String = JRPC.SendCommand(console, Command);
             return uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
         }
-
+        /// <summary>
+        /// Shows Current Console's IPAddress
+        /// </summary>
+        /// <param name="console"></param>
+        /// <returns>IPAddress String</returns>
         public static string XboxIP(this IXboxConsole console)
         {
             byte[] bytes = BitConverter.GetBytes(console.IPAddress);
             Array.Reverse((Array)bytes);
             return new IPAddress(bytes).ToString();
         }
-
+        /// <summary>
+        /// User Send's a String And That String Show's Up As A Notification On The Xbox 360 Console without adding a Notification Type
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Text"></param>
         public static void XNotify(this IXboxConsole console, string Text) => console.XNotify(Text, 34U);
-
+        /// <summary>
+        /// User Send's a String And That String Show's Up As A Notification On The Xbox 360 Console
+        /// </summary>
+        /// <param name="console"></param>
+        /// <param name="Text"></param>
+        /// <param name="Type"></param>
+        /// <returns>Xbox 360 Notification System with user's Input.</returns>
         public static void XNotify(this IXboxConsole console, string Text, uint Type)
         {
             string Command = "consolefeatures ver=" + (object)JRPC.JRPCVersion + " type=12 params=\"A\\0\\A\\2\\" + (object)JRPC.String + "/" + (object)Text.Length + "\\" + Text.ToHexString() + "\\" + (object)JRPC.Int + "\\" + (object)Type + "\\\"";
             JRPC.SendCommand(console, Command);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public enum LEDState
         {
             OFF = 0,
             RED = 8,
-            GREEN = 128, // 0x00000080
-            ORANGE = 136, // 0x00000088
+            GREEN = 128,
+            ORANGE = 136,
         }
-
+        /// <summary>
+        /// Various Temperature Type's
+        /// </summary>
         public enum TemperatureType
         {
             CPU,
@@ -1263,7 +1753,9 @@ namespace JRPC_Client
             EDRAM,
             MotherBoard,
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public enum ThreadType
         {
             System,

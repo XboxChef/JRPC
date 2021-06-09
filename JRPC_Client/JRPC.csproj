@@ -41,7 +41,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="xdevkit">
-      <HintPath>D:\Users\Serenity\Documents\Dlls\xdevkit.dll</HintPath>
+      <HintPath>..\..\..\Dlls\xdevkit.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
   </ItemGroup>
