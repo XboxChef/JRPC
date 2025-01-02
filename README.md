@@ -1,49 +1,16 @@
-#  Xbox Class (JRPC)
-Give A ⭐ To Support This Project.
+# General Improvements - Huskeyyy
+- Addressed and resolved various code issues to enhance overall reliability and maintainability.
 
-[![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XboxVillain/JRPC/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/QvdmNnfQ86)
+- All functions have for the most part stayed the same in functionality, but the new async methods have some slight changes too so users can use as normal.
 
+# Asynchronous Operations
+- Added asynchronous counterparts for every function in JRPC.
+- Since the IXboxConsole interface relies on COM interop, native asynchronous support is a pain. To get round this, Task.Run is employed as a workaround, enabling certain methods to run on background threads. This provides better performance and responsiveness, particularly for operations that would otherwise block the main thread.
 
-An open source library Made By James Am Just Realeasing It As An Archive For People To Use Etc
+# Error handling
+- Improved error handling throught the library, main with connection and sending commands.
 
-I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
-Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/QvdmNnfQ86)!
+# New Functions
+XBL Connection Status Check, returns True or False
 
-# Features
-
-### General Features
-
-
-# Requirements
-**1. An Internet Connection**
-
-**2. A know How Of C# Programing language Development**
-
-**3. An Understand How The Xbox XDevkit Works**
-
-**4. An Understanding On How To Work A Modified Xbox Console**
-
-## Code Example
-
-
-## Quick Guide
-
-### Getting Started
-
-You can Either Build Yourself By Downloading the Source Or Just Grabbing [The Latest Dll Extention](https://github.com/XboxVillain/JRPC/releases).
-
-### Connection
-
-Have To Be under The Same Local Network and Make Sure both Devices Are Connected To Same Wifi Name Or If Wired make sure to be under the same Router.
-
-### Xbox 360 Plugin Requirements
-xbdm.xex , JRPC2.xex
-
-### Computer Requirements
-A Working Tool Using this Extention Properly
-## Creator
-* [Xx jAmes t xX]
-## Disclaimer
-I have no liability for any damages done to your system by using this extention.
-## License
-This project is released under the GNU General Public License v3.
+This is a work in progress and is mainly for my own use and is being released for archive purposes, feel free to submit any issues or raise a PR if you have anything you'd like to contribute.
