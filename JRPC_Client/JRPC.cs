@@ -71,7 +71,6 @@ namespace JRPC_Client
             if (XboxNameOrIP == "default")
                 XboxNameOrIP = new XboxManager().DefaultConsole;
             Con = new XboxManager().OpenConsole(XboxNameOrIP);
-            int retry = 0;
             bool Connected = false;
             while (!Connected)
             {
@@ -83,16 +82,6 @@ namespace JRPC_Client
                 catch (COMException ex)
                 {
                     if (ex.ErrorCode == UIntToInt(0x82DA0100))
-                    {
-                        if (retry >= 3) // three attempts
-                        {
-                            Console = Con;
-                            return false;
-                        }
-                        retry++;
-                        System.Threading.Thread.Sleep(100);
-                    }
-                    else
                     {
                         Console = Con;
                         return false;
