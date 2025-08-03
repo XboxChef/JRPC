@@ -1,7 +1,7 @@
 #  Xbox Class (JRPC)
 Give A ⭐ To Support This Project.
 
-[![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XboxVillain/JRPC/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/QvdmNnfQ86)
+[![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XboxVillain/JRPC/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/VVG6geecag)
 
 
 An open source library Made By James Am Just Realeasing It As An Archive For People To Use Etc
